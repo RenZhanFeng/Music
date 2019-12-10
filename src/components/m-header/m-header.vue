@@ -1,7 +1,7 @@
 <template>
     <div class="header">
         <div class="icon"></div>
-        <h1 class="text">Vue-music</h1>
+        <h1 class="text">Vue - music</h1>
     </div>
 </template>
 
@@ -27,6 +27,7 @@ export default {
         width 30px
         height 32px
         margin-right 9px
+        margin-top 3px
         bg-image('logo')
         background-size:30px 32px;
     .text
