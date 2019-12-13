@@ -10,6 +10,10 @@ Vue.use(VueRouter);
 
 const routes = [
   {
+    path:'/',
+    redirect:'/recommend' //重定向，让初次进入网页的时候也能显示推荐页面且tab高亮
+  },
+  {
     path:'/recommend',
     component:Recommend
   },{
