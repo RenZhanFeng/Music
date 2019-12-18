@@ -71,7 +71,5 @@ export default {
   overflow: hidden;
 }
 
-.siwper-img {
-  width: 100%;
-}
+
 </style>

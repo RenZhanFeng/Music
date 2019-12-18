@@ -21,13 +21,15 @@ import { swiper, swiperSlide } from "vue-awesome-swiper";
 
 export default {
   name: "Swiper",
-  props:{
-      list:Array
+  props: {
+    list: Array
   },
   data() {
     return {
       swiperOption: {
-        pagination: ".swiper-pagination",
+        pagination: {
+          el: ".swiper-pagination"
+        },
         loop: true,
         effect: "fade",
         speed: 2000,
@@ -35,7 +37,6 @@ export default {
           delay: 2000
         }
       }
-      
     };
   },
   components: {
@@ -47,6 +48,10 @@ export default {
 
 <style scoped lang="stylus">
 @import '../../common/stylus/variable';
+
+.wrapper >>>.swiper-pagination-bullet-active {
+  background: hsla(0,0%,100%,.5);
+}//>>>可以让这里的样式不受scoped的限制，可以穿透到 .wrapper下面
 
 .siwper-img {
   width: 100%;
