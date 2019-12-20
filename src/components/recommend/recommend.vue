@@ -2,50 +2,48 @@
   <div class="recommend">
     <div class="recommend-content">
       <div class="slider-wrapper">
-        <swiper :list="ImageUrl"></swiper>
+        <swiper :list="recommends"></swiper>
       </div>
     </div>
   </div>
 </template>
 
 <script>
+import { getDiscList, getRecommend } from "../../api/recommend";
+import { ERR_OK } from "../../api/config";
 import Swiper from "./Swiper";
 
 export default {
   name: "recommend",
   data() {
     return {
-      ImageUrl: [
-        {
-          id: "0001",
-          imgUrl:
-            "http://y.gtimg.cn/music/common/upload/MUSIC_FOCUS/1911779.jpg"
-        },
-        {
-          id: "0002",
-          imgUrl:
-            "http://y.gtimg.cn/music/common/upload/MUSIC_FOCUS/1911780.jpg"
-        },
-        {
-          id: "0003",
-          imgUrl:
-            "http://y.gtimg.cn/music/common/upload/MUSIC_FOCUS/1911570.jpeg"
-        },
-        {
-          id: "0004",
-          imgUrl:
-            "http://y.gtimg.cn/music/common/upload/MUSIC_FOCUS/1911563.jpg"
-        },
-        {
-          id: "0005",
-          imgUrl:
-            "http://y.gtimg.cn/music/common/upload/MUSIC_FOCUS/1911001.jpg"
-        }
-      ]
+      recommends:[]
     };
   },
   components: {
     Swiper
+  },
+  created() {
+    this._getRecommend();
+    this._getDiscList();
+  },
+  methods: {
+    _getRecommend() {
+      getRecommend().then(res => {
+        if (res.code === 0) {
+          this.recommends = res.focus.data.content;
+        }
+        window.console.log(res.focus.data.content);
+      });
+    },
+    _getDiscList() {
+      getDiscList().then(res => {
+        if (res.code === ERR_OK) {
+          this.discList = res.data.list;
+        }
+        //window.console.log(res.data);
+      });
+    }
   }
 };
 </script>
@@ -70,6 +68,4 @@ export default {
   width: 100%;
   overflow: hidden;
 }
-
-
 </style>

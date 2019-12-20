@@ -3,7 +3,9 @@
     <swiper :options="swiperOption">
       <!-- slides -->
       <swiper-slide v-for="item in list" :key="item.id">
-        <img class="siwper-img" :src="item.imgUrl" alt="img" />
+        <a :href="'https://y.qq.com/n/yqq/album/'+item.jump_info.url+'.html#stat=y_new.index.focus.click'">
+          <img class="siwper-img" :src="item.pic_info.url" alt="img" />
+        </a>
       </swiper-slide>
 
       <!-- Optional controls -->
@@ -50,8 +52,8 @@ export default {
 @import '../../common/stylus/variable';
 
 .wrapper >>>.swiper-pagination-bullet-active {
-  background: hsla(0,0%,100%,.5);
-}//>>>可以让这里的样式不受scoped的限制，可以穿透到 .wrapper下面
+  background: hsla(0, 0%, 100%, 0.5);
+}
 
 .siwper-img {
   width: 100%;
