@@ -3,7 +3,9 @@
     <swiper :options="swiperOption">
       <!-- slides -->
       <swiper-slide v-for="item in list" :key="item.id">
-        <a :href="'https://y.qq.com/n/yqq/album/'+item.jump_info.url+'.html#stat=y_new.index.focus.click'">
+        <a
+          :href="'https://y.qq.com/n/yqq/album/'+item.jump_info.url+'.html#stat=y_new.index.focus.click'"
+        >
           <img class="siwper-img" :src="item.pic_info.url" alt="img" />
         </a>
       </swiper-slide>
@@ -32,10 +34,10 @@ export default {
         pagination: {
           el: ".swiper-pagination"
         },
-        loop: true,
         effect: "fade",
         speed: 2000,
         autoplay: {
+          loop: true,
           delay: 2000
         }
       }
