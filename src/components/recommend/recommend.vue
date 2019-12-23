@@ -5,7 +5,7 @@
         <div class="slider-wrapper">
           <swiper :list="Swiper"></swiper>
         </div>
-        
+
         <div class="song-list">
           <h1 class="list-title">热门歌单推荐</h1>
           <song-list :list="SongList"></song-list>
@@ -16,7 +16,7 @@
 </template>
 
 <script>
-import { getDiscList, getRecommend } from "../../api/recommend";
+import { getRecommend } from "../../api/recommend";
 import { ERR_OK } from "../../api/config";
 import Swiper from "./Swiper";
 import SongList from "./SongList";
@@ -40,8 +40,7 @@ export default {
     let scroll = new BScroll(wrapper);
   },
   created() {
-    this._getRecommend();
-    this._getDiscList();
+    this._getRecommend()
   },
   methods: {
     _getRecommend() {
@@ -50,15 +49,6 @@ export default {
           this.Swiper = res.focus.data.content;
           this.SongList = res.recomPlaylist.data.v_hot;
         }
-        window.console.log(this.SongList);
-      });
-    },
-    _getDiscList() {
-      getDiscList().then(res => {
-        if (res.code === ERR_OK) {
-          this.discList = res.data.list;
-        }
-        //window.console.log(res.data);
       });
     }
   }
