@@ -40,7 +40,8 @@ export default {
           loop: true,
           delay: 2000
         }
-      }
+      },
+      
     };
   },
   components: {
@@ -51,7 +52,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-@import '../../common/stylus/variable';
+@import '../../../common/stylus/variable';
 
 .wrapper >>>.swiper-pagination-bullet-active {
   background: hsla(0, 0%, 100%, 0.5);

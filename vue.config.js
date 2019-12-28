@@ -44,6 +44,16 @@ module.exports = {
         pathRewrite: {
           '^/api/': ''
         }
+      },
+      '/singer/': {
+        target: 'https://c.y.qq.com/v8/fcg-bin/v8.fcg',
+        bypass: function (req, res, proxyOptions) {
+          req.headers.referer = 'https://c.y.qq.com';
+          req.headers.host = 'c.y.qq.com';
+        },
+        pathRewrite: {
+          '^/singer/': ''
+        }
       }
 
     }

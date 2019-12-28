@@ -16,12 +16,11 @@
 </template>
 
 <script>
-import { getRecommend } from "../../api/recommend";
-import { ERR_OK } from "../../api/config";
-import Swiper from "./Swiper";
-import SongList from "./SongList";
+import axios from "axios";
+import Swiper from "./components/Swiper";
+import SongList from "./components/SongList";
 import BScroll from "better-scroll";
-
+import { commonParams, recommendData, ERR_OK } from "../../api/config";
 
 export default {
   name: "recommend",
@@ -40,16 +39,27 @@ export default {
     let scroll = new BScroll(wrapper);
   },
   created() {
-    this._getRecommend()
+    this._getRecommend();
   },
   methods: {
     _getRecommend() {
-      getRecommend().then(res => {
-        if (res.code === 0) {
-          this.Swiper = res.focus.data.content;
-          this.SongList = res.recomPlaylist.data.v_hot;
-        }
-      });
+      axios
+        .get("/api/", {
+          params: recommendData
+        })
+        .then(res => {
+          if (res.data.code === ERR_OK) {
+            this.Swiper = res.data.focus.data.content;
+            this.SongList = res.data.recomPlaylist.data.v_hot;
+          }
+        });
+
+      // getRecommend().then(res => {
+      //   if (res.code === 0) {
+      //     this.Swiper = res.focus.data.content;
+      //     this.SongList = res.recomPlaylist.data.v_hot;
+      //   }
+      // });
     }
   }
 };
@@ -83,6 +93,4 @@ export default {
   font-size: $font-size-medium;
   color: $color-theme;
 }
-
-
 </style>

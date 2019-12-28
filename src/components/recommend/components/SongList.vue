@@ -11,14 +11,12 @@
         </div>
       </li>
     </ul>
-    <div class="loading-container" v-show="!list.length">
-      <loading></loading>
-    </div>
+    <loading v-show="!list.length"></loading>
   </div>
 </template>
 
 <script>
-import Loading from "../../base/loading/loading";
+import Loading from "../../../base/loading/loading";
 export default {
   name: "SongList",
   props: {
@@ -31,7 +29,7 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-@import '../../common/stylus/variable';
+@import '../../../common/stylus/variable';
 
 .item {
   display: flex;
@@ -65,12 +63,5 @@ export default {
 
 .desc {
   color: $color-text-d;
-}
-
-.loading-container {
-  position: absolute;
-  width: 100%;
-  top: 50%;
-  transform: translateY(-50%);
 }
 </style>
