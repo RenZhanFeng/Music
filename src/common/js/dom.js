@@ -15,7 +15,15 @@ export function hasClass(el, className) {
     return reg.test(el.className)
 }
 
-//
-export function getData(el,name,val){
-
+//获取节点属性
+export function getData(el, name, val) {
+    const prefix = 'data-'
+    name = prefix + name
+    if (val) {
+        //setAttribute:添加指定的属性，并为其赋指定的值。
+        return el.setAttribute(name, val)
+    } else {
+        //getAttribute:获取指定的属性的值
+        return el.getAttribute(name)
+    }
 }

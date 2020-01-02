@@ -1,6 +1,9 @@
 <template>
   <div class="singer">
-    <list-View :list="Singers"></list-View>
+    <list-View :list="Singers" @select='selectSinger'></list-View>
+    <transition name="slide">
+    <router-view></router-view>
+    </transition>
   </div>
 </template>
 
@@ -27,6 +30,13 @@ export default {
     this._getSingerList();
   },
   methods: {
+    //歌手详情页跳转路由设置
+    selectSinger(singer){
+      //router编程式跳转接口
+      this.$router.push({
+        path:`/singer/${singer.id}`
+      })
+    },
     //获取数据
     _getSingerList() {
       axios
@@ -103,5 +113,12 @@ export default {
   bottom: 0;
   width: 100%;
   overflow: hidden;
+}
+.slide-enter-active, .slide-leave-active {
+  transition: all 0.3s;
+}
+
+.slide-enter, .slide-leave-to {
+  transform: translate3d(100%, 0, 0);
 }
 </style>

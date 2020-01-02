@@ -1,18 +1,22 @@
 <template>
-  <div class="singer wrapper">
+  <div class="singer" ref="wrapper">
     <ul class="content">
-      <li class="title" v-for="item in list" :key="item.id" :ref="item.title">
+      <li class="title" v-for="item in list" :key="item.id" ref="listGroup">
         <h2>{{item.title}}</h2>
         <ul>
-          <li class="items" v-for="item in item.items" :key="item.id">
+          <li class="items" v-for="item in item.items" :key="item.id" @click="selectItem(item)">
             <img class="items-img" v-lazy="item.avatar" alt="img" />
             <span class="items-name">{{item.name}}</span>
           </li>
         </ul>
       </li>
     </ul>
-    <!-- @touchstart='' 屏幕触摸事件 -->
-    <div class="list-shoortcut" @click="onShortcutTouchStart">
+    <!-- @touchstart='' 屏幕触摸事件 prevent:防止事件冒泡和浏览器的原生滚动-->
+    <div
+      class="list-shoortcut"
+      @touchstart="onShortcutTouchStart"
+      @touchmove.prevent="onShortcutTouchMove"
+    >
       <ul>
         <li
           class="item"
@@ -29,6 +33,7 @@
 <script>
 import Bscroll from "better-scroll";
 import Loading from "../../../base/loading/loading";
+import { getData, addClass } from "../../../common/js/dom";
 
 const HOT_NAME = "热门";
 const HOT_SINGER_LEN = 10;
@@ -43,15 +48,16 @@ export default {
   },
   data() {
     return {
-      letter: ""
+      touch: {},
+      scrollY: -1,
+      currentIndex: 0
     };
   },
   components: {
     Loading
   },
   mounted() {
-    let wrapper = document.querySelector(".wrapper");
-    let scroll = new Bscroll(wrapper);
+    this.scroll = new Bscroll(this.$refs.wrapper);
   },
   computed: {
     //获取Findex的值
@@ -62,9 +68,27 @@ export default {
     }
   },
   methods: {
+    selectItem(item){
+      this.$emit('select',item)
+    },
     onShortcutTouchStart(e) {
-      this.letter = e.target.innerText;
-    }
+      //anchor:锚点
+      let anchorIndex = getData(e.target, "index");
+      let firstTouch = e.touches[0];
+      this.touch.anchorIndex = anchorIndex;
+      this.touch.y1 = firstTouch.pageY;
+      this.scroll.scrollToElement(this.$refs.listGroup[anchorIndex]);
+    },
+    onShortcutTouchMove(e) {
+      let firstTouch = e.touches[0];
+      this.touch.y2 = firstTouch.pageY;
+      //18是每一个项的高度
+      let delta = Math.floor((this.touch.y2 - this.touch.y1) / 18);
+      let anchorIndex = parseInt(this.touch.anchorIndex) + delta;
+      //后面的参数1000表示列表滚动的时间
+      this.scroll.scrollToElement(this.$refs.listGroup[anchorIndex], 1000);
+    },
+    scroll() {}
   }
 };
 </script>
@@ -98,6 +122,10 @@ export default {
   font-size: $font-size-medium;
 }
 
+.title {
+  padding-bottom: 20px;
+}
+
 .title h2 {
   height: 30px;
   line-height: 30px;
@@ -125,5 +153,10 @@ export default {
   line-height: 1;
   color: $color-text-l;
   font-size: $font-size-small;
+}
+
+.text {
+  color: $color-theme;
+  font-size: $font-size-large;
 }
 </style>

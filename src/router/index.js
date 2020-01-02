@@ -4,29 +4,37 @@ import Recommend from "../components/recommend/recommend";
 import Rank from "../components/rank/rank";
 import Search from "../components/search/search";
 import Singer from "../components/singer/singer";
+import SingerDetail from '../components/singer/singer-detail'
 
 
 Vue.use(VueRouter);
 
 const routes = [
   {
-    path:'/',
-    redirect:'/recommend' //重定向，让初次进入网页的时候也能显示推荐页面且tab高亮
+    path: '/',
+    redirect: '/recommend' //重定向，让初次进入网页的时候也能显示推荐页面且tab高亮
   },
   {
-    path:'/recommend',
-    component:Recommend
-  },{
-    path:'/singer',
-    component:Singer
-  },{
-    path:'/rank',
-    component:Rank
-  },{
-    path:'/search',
-    component:Search
+    path: '/recommend',
+    component: Recommend
+  },
+  {
+    path: '/singer',
+    component: Singer,
+    children: [{
+      path: ':id',
+      component: SingerDetail
+    }]
+  },
+  {
+    path: '/rank',
+    component: Rank
+  },
+  {
+    path: '/search',
+    component: Search
   }
-  
+
 ];
 
 const router = new VueRouter({
