@@ -27,3 +27,6 @@ export function getData(el, name, val) {
         return el.getAttribute(name)
     }
 }
+
+//
+let elementStyle = document

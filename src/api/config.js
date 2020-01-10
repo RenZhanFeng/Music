@@ -24,6 +24,11 @@ export const singerData = Object.assign({}, commonParams, {
   key: "all_all_all",
   pagesize: 100,
   pagenum: 1
-});
+})
+
+export const singerDetails = Object.assign({}, commonParams, {
+  "-": "getSingerSong12347230769274442",
+  g_tk: 632036867
+})
 
 

@@ -1,8 +1,8 @@
 <template>
   <div class="singer">
-    <list-View :list="Singers" @select='selectSinger'></list-View>
+    <list-View :list="Singers" @select="selectSinger"></list-View>
     <transition name="slide">
-    <router-view></router-view>
+      <router-view></router-view>
     </transition>
   </div>
 </template>
@@ -12,6 +12,9 @@ import axios from "axios";
 import { commonParams, singerData, ERR_OK } from "../../api/config";
 import Singer from "../../common/js/singer";
 import ListView from "./components/listView";
+//vuex提供的语法糖（vuex对数据的修改和获取都提供了一系列语法糖，否则需要手动写很多代码）
+//mapMutations对mutations做一层封装
+import { mapMutations } from "vuex";
 
 const HOT_NAME = "热门";
 const HOT_SINGER_LEN = 10;
@@ -31,11 +34,13 @@ export default {
   },
   methods: {
     //歌手详情页跳转路由设置
-    selectSinger(singer){
+    selectSinger(singer) {
       //router编程式跳转接口
       this.$router.push({
-        path:`/singer/${singer.id}`
-      })
+        path: `/singer/${singer.id}`
+      });
+      //实现一个对mutation的提交
+      this.setSinger(singer);
     },
     //获取数据
     _getSingerList() {
@@ -99,7 +104,11 @@ export default {
         return a.title.charCodeAt(0) - b.title.charCodeAt(0);
       });
       return hot.concat(ret);
-    }
+    },
+    //对'SET_SINGER'做映射
+    ...mapMutations({
+      setSinger: "SET_SINGER"
+    })
   }
 };
 </script>
@@ -114,11 +123,12 @@ export default {
   width: 100%;
   overflow: hidden;
 }
-.slide-enter-active, .slide-leave-active {
-  transition: all 0.3s;
-}
 
-.slide-enter, .slide-leave-to {
-  transform: translate3d(100%, 0, 0);
-}
+// .slide-enter-active, .slide-leave-active {
+//   transition: all 0.3s;
+// }
+
+// .slide-enter, .slide-leave-to {
+//   transform: translate3d(100%, 0, 0);
+// }
 </style>
