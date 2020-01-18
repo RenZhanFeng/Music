@@ -20,7 +20,7 @@
     <!--@scroll="scrolls"无效！！！  -->
     <div class="wrapper" ref="list">
       <div class="song-list-wrapper content">
-        <song-list :list="list"></song-list>
+        <song-list :list="list" @select="selectItem"></song-list>
       </div>
       <div class="loading-container" v-show="!list.length">
         <loading></loading>
@@ -33,6 +33,7 @@
 import BScroll from "better-scroll";
 import Loading from "../../../base/loading/loading";
 import SongList from "../../../base/song-list/song-list";
+import {mapActions} from 'vuex'
 export default {
   props: {
     list: {
@@ -69,44 +70,59 @@ export default {
     random() {},
     scrolls(e) {
       this.scrollY = e.y;
-    }
+    },
+    selectItem(item,index) {
+      // console.log(index)
+      // console.log(item)
+      this.selectPlay({
+        list:this.list,
+        index
+      })
+    },
+    ...mapActions([
+      'selectPlay'
+    ])
   },
   watch: {
     scrollY(newY) {
       let tranlateY = Math.max(this.minTranslateY, newY); //返回两个值之中最大的一个值
-      let zIndex = 0
-      let scale = 1
-      let blur = 0
+      let zIndex = 0;
+      let scale = 1;
+      let blur = 0;
       this.$refs.layer.style.transform = `translate3d(0,${tranlateY}px,0)`;
-      this.$refs.layer.style["webkitTransform"] = `translate3d(0,${tranlateY}px,0)`;
+      this.$refs.layer.style[
+        "webkitTransform"
+      ] = `translate3d(0,${tranlateY}px,0)`;
 
-      const percent = Math.abs(newY / this.imageHeight)
-      if(newY > 0){
-          scale = 1 +percent
-          zIndex = 10
-      }else{
-          //给ios手机做上拉时背景图高斯模糊效果，安卓手机和电脑浏览器不支持
-          blur = Math.min(20 * percent,20)
+      const percent = Math.abs(newY / this.imageHeight);
+      if (newY > 0) {
+        scale = 1 + percent;
+        zIndex = 10;
+      } else {
+        //给ios手机做上拉时背景图高斯模糊效果，安卓手机和电脑浏览器不支持
+        blur = Math.min(20 * percent, 20);
       }
       //给ios手机做上拉时背景图高斯模糊效果，安卓手机和电脑浏览器不支持
-      this.$refs.filter.style['backdrop-filter'] = `blur(${blur}px)`
-      this.$refs.filter.style['webkitBackdrop-filter'] = `blur(${blur}px)`
-      if(newY < this.minTranslateY){
-          zIndex = 10
-          this.$refs.bgImage.style.paddingTop = 0
-          this.$refs.bgImage.style.height = this.$refs.title.clientHeight+'px'
-          this.$refs.playBtn.style.display = 'none'
-      }else{
-          this.$refs.bgImage.style.paddingTop = '70%'
-          this.$refs.bgImage.style.height = 0
-          this.$refs.playBtn.style.display = ''
+      this.$refs.filter.style["backdrop-filter"] = `blur(${blur}px)`;
+      this.$refs.filter.style["webkitBackdrop-filter"] = `blur(${blur}px)`;
+      if (newY < this.minTranslateY) {
+        zIndex = 10;
+        this.$refs.bgImage.style.paddingTop = 0;
+        this.$refs.bgImage.style.height = this.$refs.title.clientHeight + "px";
+        this.$refs.playBtn.style.display = "none";
+      } else {
+        this.$refs.bgImage.style.paddingTop = "70%";
+        this.$refs.bgImage.style.height = 0;
+        this.$refs.playBtn.style.display = "";
       }
-      this.$refs.bgImage.style.zIndex = zIndex
+      this.$refs.bgImage.style.zIndex = zIndex;
       this.$refs.bgImage.style.transform = `scale(${scale})`;
-      this.$refs.bgImage.style["webkitTransform"] = `scale(${scale})`;;
+      this.$refs.bgImage.style["webkitTransform"] = `scale(${scale})`;
     }
   },
-  created() {},
+  created() {
+    
+  },
   mounted() {
     this.imageHeight = this.$refs.bgImage.clientHeight;
     this.minTranslateY = -this.imageHeight + this.$refs.title.clientHeight;

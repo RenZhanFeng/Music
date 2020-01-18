@@ -57,7 +57,6 @@ export default {
         .then(res => {
           if (res.data.code === ERR_OK) {
             this.song = res.data.singerSongList.data.songList;
-            console.log(this.song);
           }
         });
     }
@@ -72,6 +71,7 @@ export default {
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
+
 .slide-enter-active, .slide-leave-active {
   transition: all 0.3s;
 }

@@ -1,7 +1,12 @@
 <template>
   <div class="song-list">
     <ul>
-      <li v-for="item in list" :key="item.songInfo.id" class="item">
+      <li
+        v-for="(item,index) in list"
+        :key="item.songInfo.id"
+        class="item"
+        @click="selectItem(item,index)"
+      >
         <div class="content">
           <h2 class="name">{{item.songInfo.name}}</h2>
           <p class="desc">{{item.songInfo.singer[0].name}}·{{item.songInfo.album.name}}</p>
@@ -17,6 +22,12 @@ export default {
     list: {
       type: Array,
       default: []
+    }
+  },
+  methods: {
+    selectItem(item, index) {
+      this.$emit("select", item, index);
+      //console.log(item)
     }
   }
 };
@@ -37,7 +48,6 @@ export default {
 .content {
   flex: 1;
   line-height: 20px;
-  //overflow: hidden;
 }
 
 .name {
