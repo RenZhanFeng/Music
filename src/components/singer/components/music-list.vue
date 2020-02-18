@@ -72,8 +72,8 @@ export default {
       this.scrollY = e.y;
     },
     selectItem(item,index) {
-      // console.log(index)
-      // console.log(item)
+      console.log(index)
+      console.log(item)
       this.selectPlay({
         list:this.list,
         index

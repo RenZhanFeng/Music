@@ -2,10 +2,10 @@
   <div class="player" v-show="playlist.length > 0">
     <div class="normal-player" v-show="fullScreen">
       <div class="background">
-        <!-- <img
+        <img
           src="https://y.gtimg.cn/music/photo_new/T002R300x300M000001hGx1Z0so1YX.jpg?max_age=2592000"
           alt="img"
-        /> -->
+        />
       </div>
       <div class="top">
         <div class="back">
@@ -18,11 +18,11 @@
         <div class="middle-l">
           <div class="cd-wrapper">
             <div class="cd">
-              <!-- <img
+              <img
                 src="https://y.gtimg.cn/music/photo_new/T002R300x300M000001hGx1Z0so1YX.jpg?max_age=2592000"
                 alt="img"
                 class="image"
-              /> -->
+              />
             </div>
           </div>
         </div>
