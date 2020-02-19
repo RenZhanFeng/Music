@@ -30,6 +30,7 @@ export default {
   },
   created() {
     this._getsingerDetail(this.singer.id);
+    //console.log(this.singer)
   },
   methods: {
     //获取数据
@@ -62,12 +63,7 @@ export default {
     }
   }
 };
-// "002zfxmN2e1vLQ"
-// `http://ws.stream.qqmusic.qq.com/"002zfxmN2e1vLQ".m4a?fromtag=46`
-// http://113.96.98.150/amobile.music.tc.qq.com/C400001Qu4I30eVFYb.m4a?guid=1634402707&vkey=43BB997F1D0895C06B20B502786030A4A7DF0C2BFA2CF50AA98B862C0E8D5E9808DF269168C6E7B4B2A0607B129C502660E304652F56CDB9&uin=0&fromtag=66
-// http://113.96.98.150/amobile.music.tc.qq.com/C400003mBrF72dILfK.m4a?guid=1634402707&vkey=7D88E044FC0FF17ECED75D3B8816AE934E5B265CF8CCAADA4ECF0A2434E63D5342A091DADC12E09222A7715CC781F531DCFB43FEA32F1E4C&uin=0&fromtag=66
-// 专辑图片：
-// `//y.gtimg.cn/music/photo_new/T002R300x300M000${song.album.mid}.jpg?max_age=2592000`
+
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
@@ -80,4 +76,3 @@ export default {
   transform: translate3d(100%, 0, 0);
 }
 </style>
-
