@@ -6,7 +6,7 @@ const state = {
     singer: {},
 
     //播放器数据
-    playing: false,//播放暂停
+    playing: true,//播放暂停
     fullScreen: false,//播放器展开和收起
     playlist: [],//播放列表
     sequenceList: [],//顺序列表，在不同的播放模式下调整不同的列表顺序
