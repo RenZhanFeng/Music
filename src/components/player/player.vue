@@ -35,6 +35,13 @@
           </div>
         </div>
         <div class="bottom">
+          <div class="progress-wrapper">
+            <span class="time time-l">{{format(currentTime)}}</span>
+            <div class="progress-bar-wrapper">
+              <progress-bar :percent="percent" @percentChange="onProgressBarChange"></progress-bar>
+            </div>
+            <span class="time time-r">{{format(currentSong.songInfo.interval)}}</span>
+          </div>
           <div class="operators">
             <div class="icon i-left">
               <i class="icon-sequence"></i>
@@ -69,22 +76,27 @@
           <p class="desc" v-html="currentSong.songInfo.singer[0].name"></p>
         </div>
         <div class="control">
-          <!-- .stop阻止冒泡 -->
-          <i :class="miniIcon" @click.stop="togglePlaying"></i>
+          <!-- 传固定的值就不需要加： -->
+          <progress-circle :radius="radius" :percent="percent">
+            <!-- .stop阻止冒泡 -->
+            <i class="icon-mini" :class="miniIcon" @click.stop="togglePlaying"></i>
+          </progress-circle>
         </div>
         <div class="control">
           <i class="icon-playlist"></i>
         </div>
       </div>
     </transition>
-    <!-- canplay和error是audio自带的事件 -->
-    <!-- canplay是歌曲能播放的时候派发 -->
-    <!-- error是歌曲能播放出错的时候派发 -->
+    <!-- audio自带的事件:
+    canplay是歌曲能播放的时候派发
+    error是歌曲能播放出错的时候派发
+    timeupdate是歌曲播放过程派发-->
     <audio
-      :src="'https://isure.stream.qqmusic.qq.com/C400'+currentSong.songInfo.file.media_mid+'.m4a?guid=7212882319&vkey=94739E944E256CE70DC23B16CB474260911303FC3EBFD8442731B6C2AEAD072E9E0AFB1AE7F9545268EC0D67630AE58FC0108AB6E5104E3D&uin=7467&fromtag=66'"
+      :src="'https://isure.stream.qqmusic.qq.com/C400'+currentSong.songInfo.file.media_mid+'.m4a?guid=7212882319&vkey='+'2B46A132BE86DDC3F5E3C661A849B4CC133F9478E4E8924583A50368740EB992CF34B26370B953CC618A98B195A02CFF93157725581ED10D'+'&uin=7467&fromtag=66'"
       ref="audio"
       @canplay="ready"
       @error="error"
+      @timeupdate="updateTime"
     ></audio>
   </div>
 </template>
@@ -92,12 +104,20 @@
 <script>
 import { mapGetters, mapMutations } from "vuex";
 import animations from "create-keyframe-animation";
+import ProgressBar from "../../base/progress-bar/progress-bar";
+import ProgressCircle from "../../base/progress-circle/progress-circle";
 
 export default {
   data() {
     return {
-      songReady: false
+      songReady: false,
+      currentTime: 0, //歌曲已播放的时间
+      radius: 32
     };
+  },
+  components: {
+    ProgressBar,
+    ProgressCircle
   },
   computed: {
     ...mapGetters([
@@ -117,6 +137,9 @@ export default {
     //控制圆盘专辑的转动跟随播放暂停
     cdCls() {
       return this.playing ? "play" : "play pause";
+    },
+    percent() {
+      return this.currentTime / this.currentSong.songInfo.interval;
     }
   },
   methods: {
@@ -175,6 +198,31 @@ export default {
     //当用户不能点击的时候添加disable样式
     disableCls() {
       return this.songReady ? "" : "disable";
+    },
+    //获取歌曲已播放的时间
+    updateTime(e) {
+      this.currentTime = e.target.currentTime;
+    },
+    format(interval) {
+      interval = interval | 0; //向下取整，相当于调用Math.floor
+      const minute = (interval / 60) | 0;
+      const second = this._pad(interval % 60);
+      return `${minute}:${second}`;
+    },
+    _pad(num, n = 2) {
+      let len = num.toString().length;
+      while (len < n) {
+        num = "0" + num;
+        len++;
+      }
+      return num;
+    },
+    onProgressBarChange(percent) {
+      this.$refs.audio.currentTime =
+        this.currentSong.songInfo.interval * percent;
+      if (!this.playing) {
+        this.togglePlaying();
+      }
     },
     //专辑图片的弹出缩回动画
     enter(el, done) {
@@ -248,7 +296,7 @@ export default {
     }
   },
   created() {
-    //console.log(encodeURIComponent("1600819"));
+    //console.log(this.currentSong.duration);
   }
 };
 </script>
@@ -384,7 +432,7 @@ export default {
   align-items: center;
 }
 
-.icon {
+.operators .icon {
   flex: 1;
   color: $color-theme;
 }
@@ -472,8 +520,43 @@ i {
   color: $color-theme-d;
 }
 
+.icon-mini {
+  font-size: 32px;
+  position: absolute;
+  left: 0;
+  top: 0;
+}
+
 .disable {
   color: $color-theme-d;
+}
+
+.progress-wrapper {
+  display: flex;
+  align-items: center;
+  width: 80%;
+  margin: 0px auto;
+  padding: 10px 0;
+}
+
+.time {
+  color: $color-text;
+  font-size: $font-size-small;
+  flex: 0 0 30px;
+  line-height: 30px;
+  width: 30px;
+}
+
+.time-l {
+  text-align: left;
+}
+
+.time-r {
+  text-align: right;
+}
+
+.progress-bar-wrapper {
+  flex: 1;
 }
 
 // 动画效果
