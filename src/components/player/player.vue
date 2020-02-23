@@ -43,8 +43,8 @@
             <span class="time time-r">{{format(currentSong.songInfo.interval)}}</span>
           </div>
           <div class="operators">
-            <div class="icon i-left">
-              <i class="icon-sequence"></i>
+            <div class="icon i-left" @click="changeMode">
+              <i :class="iconMode"></i>
             </div>
             <div class="icon i-left" :class="disableCls">
               <i class="icon-prev" @click="prev"></i>
@@ -90,13 +90,15 @@
     <!-- audio自带的事件:
     canplay是歌曲能播放的时候派发
     error是歌曲能播放出错的时候派发
-    timeupdate是歌曲播放过程派发-->
+    timeupdate是歌曲播放过程派发
+    ended是歌曲播放结束时派发-->
     <audio
-      :src="'https://isure.stream.qqmusic.qq.com/C400'+currentSong.songInfo.file.media_mid+'.m4a?guid=7212882319&vkey='+'2B46A132BE86DDC3F5E3C661A849B4CC133F9478E4E8924583A50368740EB992CF34B26370B953CC618A98B195A02CFF93157725581ED10D'+'&uin=7467&fromtag=66'"
+      :src="'https://isure.stream.qqmusic.qq.com/C400'+currentSong.songInfo.file.media_mid+'.m4a?guid=7212882319&vkey='+'BBB40C8A90C81410AEC73011D347DF2058B008D3BC9D2530896DA95DB61EC1E0C4FAFDD19010E1E0D7D5EBD8593397B4088617926C89B44C'+'&uin=7467&fromtag=66'"
       ref="audio"
       @canplay="ready"
       @error="error"
       @timeupdate="updateTime"
+      @ended="end"
     ></audio>
   </div>
 </template>
@@ -106,13 +108,16 @@ import { mapGetters, mapMutations } from "vuex";
 import animations from "create-keyframe-animation";
 import ProgressBar from "../../base/progress-bar/progress-bar";
 import ProgressCircle from "../../base/progress-circle/progress-circle";
+import { playMode } from "../../common/js/config";
+import { shuffle } from "../../common/js/util";
 
 export default {
   data() {
     return {
       songReady: false,
       currentTime: 0, //歌曲已播放的时间
-      radius: 32
+      radius: 32,
+
     };
   },
   components: {
@@ -125,7 +130,9 @@ export default {
       "playlist",
       "currentSong",
       "playing",
-      "currentIndex"
+      "currentIndex",
+      "mode",
+      "sequenceList"
     ]),
     //控制暂停播放的按钮切换
     playIcon() {
@@ -140,6 +147,14 @@ export default {
     },
     percent() {
       return this.currentTime / this.currentSong.songInfo.interval;
+    },
+    //播放模式切换
+    iconMode() {
+      return this.mode === playMode.sequence
+        ? "icon-sequence"
+        : this.mode === playMode.loop
+        ? "icon-loop"
+        : "icon-random";
     }
   },
   methods: {
@@ -147,7 +162,9 @@ export default {
     ...mapMutations({
       setFullScreen: "SET_FULL_SCREEN",
       setPlayingState: "SET_PLATING_STATE",
-      setCurrentIndex: "SET_CURRENT_INDEX"
+      setCurrentIndex: "SET_CURRENT_INDEX",
+      setPlayMode: "SET_PLAY_MODE",
+      setPlayist: "SET_PLAYLIST"
     }),
     //收起和打开全屏播放器组件
     back() {
@@ -280,11 +297,54 @@ export default {
         y,
         scale
       };
+    },
+    //点击修改播放模式
+    changeMode() {
+      const mode = (this.mode + 1) % 3;
+      this.setPlayMode(mode);
+      //根据播放模式修改播放列表
+      let list = null;
+      if (mode === playMode.random) {
+        list = shuffle(this.sequenceList);
+      } else {
+        list = this.sequenceList;
+      }
+      this.resetCurrentIndex(list);
+      this.setPlayist(list);
+      console.log(this.currentSong);
+    },
+    //当playList改变的时候也要让currentIndex一起改变，来保证currentSong的ID不变
+    resetCurrentIndex(list) {
+      //findIndex是ES6的语法
+      let index = list.findIndex(item => {
+        return item.songInfo.id === this.currentSong.songInfo.id;
+      });
+      this.setCurrentIndex(index);
+    },
+    //当一首歌播放结束时，自动切换到下一首
+    end() {
+      if (this.mode === playMode.loop) {
+        this.loop();
+      } else {
+        this.next();
+      }
+    },
+    //循环播放模式
+    loop() {
+      this.$refs.audio.currentTime = 0;
+      this.$refs.audio.play();
     }
   },
   watch: {
     //检测currentSong的变化，发生变化就调用audio的play方法播放音乐
-    currentSong() {
+    currentSong(oldSong, newSong) {
+      //避免切换播放模式的时候也触发
+      //关闭原因：三层表达式访问数据报错，vuex中state管理加载的数据，
+      //异步调用显示，然后vue渲染机制中：异步数据先显示初始数据，再显示带数据的数据， 
+
+      // if (oldSong.songInfo.id === newSong.songInfo.id) {
+      //   return;
+      // }
       this.$nextTick(() => {
         this.$refs.audio.play();
       });
@@ -294,9 +354,6 @@ export default {
       const audio = this.$refs.audio;
       newPlaying ? audio.play() : audio.pause();
     }
-  },
-  created() {
-    //console.log(this.currentSong.duration);
   }
 };
 </script>

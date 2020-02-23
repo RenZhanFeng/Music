@@ -2,7 +2,7 @@
   <div class="progress-bar" ref="progressBar" @click="progressClick">
     <div class="bar-inner">
       <div class="progress" ref="progress"></div>
-      <div class="progress-btn-wrapper" ref="progressBtn">
+      <div class="progress-btn-wrapper" ref="progressBtn" >
         <div
           class="progress-btn"
           @touchstart.prevent="progressTouchStart"
@@ -51,8 +51,16 @@ export default {
       this._triggerPercent();
     },
     progressClick(e) {
-      this._offset(e.offsetX);
+      const rect = this.$refs.progressBar.getBoundingClientRect()
+      let offsetWidth = e.pageX - rect.left
+      const barWidth = this.$refs.progressBar.clientWidth;
+      if(offsetWidth > barWidth){
+        return offsetWidth = barWidth
+      }
+      this._offset(offsetWidth);
       this._triggerPercent();
+      console.log(progressBtnWidth)
+      console.log(offsetWidth)
     },
     _triggerPercent() {
       const barWidth = this.$refs.progressBar.clientWidth - progressBtnWidth;
