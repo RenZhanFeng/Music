@@ -311,7 +311,7 @@ export default {
       }
       this.resetCurrentIndex(list);
       this.setPlayist(list);
-      console.log(this.currentSong);
+      //console.log(this.currentSong);
     },
     //当playList改变的时候也要让currentIndex一起改变，来保证currentSong的ID不变
     resetCurrentIndex(list) {
@@ -339,12 +339,9 @@ export default {
     //检测currentSong的变化，发生变化就调用audio的play方法播放音乐
     currentSong(oldSong, newSong) {
       //避免切换播放模式的时候也触发
-      //关闭原因：三层表达式访问数据报错，vuex中state管理加载的数据，
-      //异步调用显示，然后vue渲染机制中：异步数据先显示初始数据，再显示带数据的数据， 
-
-      // if (oldSong.songInfo.id === newSong.songInfo.id) {
-      //   return;
-      // }
+      if (oldSong.songInfo === newSong.songInfo) {
+        return;
+      }
       this.$nextTick(() => {
         this.$refs.audio.play();
       });
