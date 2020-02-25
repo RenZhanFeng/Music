@@ -93,7 +93,7 @@
     timeupdate是歌曲播放过程派发
     ended是歌曲播放结束时派发-->
     <audio
-      :src="'https://isure.stream.qqmusic.qq.com/C400'+currentSong.songInfo.file.media_mid+'.m4a?guid=7212882319&vkey='+'BBB40C8A90C81410AEC73011D347DF2058B008D3BC9D2530896DA95DB61EC1E0C4FAFDD19010E1E0D7D5EBD8593397B4088617926C89B44C'+'&uin=7467&fromtag=66'"
+      :src="'https://isure.stream.qqmusic.qq.com/C400'+currentSong.songInfo.file.media_mid+'.m4a?guid='+'1634402707'+'&vkey='+'1B228DE71276A2BB54D39D07ACFA50DAE5B901525BFD7EE4BA596F684BAFC1A46494D951B3B95BA06C239841ECB4A387B54F24BC9344DCA0'+'&uin=7467&fromtag=66'"
       ref="audio"
       @canplay="ready"
       @error="error"
@@ -110,6 +110,8 @@ import ProgressBar from "../../base/progress-bar/progress-bar";
 import ProgressCircle from "../../base/progress-circle/progress-circle";
 import { playMode } from "../../common/js/config";
 import { shuffle } from "../../common/js/util";
+import { songLyric, ERR_OK } from "../../common/js/config";
+import axios from "axios";
 
 export default {
   data() {
@@ -117,7 +119,7 @@ export default {
       songReady: false,
       currentTime: 0, //歌曲已播放的时间
       radius: 32,
-
+      SongLyric: [] //歌词数据
     };
   },
   components: {
@@ -157,7 +159,22 @@ export default {
         : "icon-random";
     }
   },
+  created() {
+    this._getSongLyric();
+  },
   methods: {
+    _getSongLyric() {
+      axios
+        .get("/songLyric/", {
+          params: songLyric
+        })
+        .then(res => {
+          if (res.data.code === ERR_OK) {
+            this.SongLyric = res;
+            console.log(this.SongLyric);
+          }
+        });
+    },
     //对Mutations的映射
     ...mapMutations({
       setFullScreen: "SET_FULL_SCREEN",

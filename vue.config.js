@@ -29,7 +29,7 @@ module.exports = {
   // 所有 webpack-dev-server 的选项都支持。
   devServer: {
     //host: "192.168.8.104",
-    port: 8080, // 端口号
+    port: 8081, // 端口号
     https: false,
     open: true, //配置自动启动浏览器
 
@@ -53,6 +53,16 @@ module.exports = {
         },
         pathRewrite: {
           '^/singer/': ''
+        }
+      },
+      '/songLyric/': {
+        target: 'https://c.y.qq.com/lyric/fcgi-bin/fcg_query_lyric_new.fcg',
+        bypass: function (req, res, proxyOptions) {
+          req.headers.referer = 'https://c.y.qq.com';
+          req.headers.host = 'c.y.qq.com';
+        },
+        pathRewrite: {
+          '^/songLyric/': ''
         }
       },
 

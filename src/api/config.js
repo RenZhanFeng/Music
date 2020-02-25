@@ -31,4 +31,9 @@ export const singerDetails = Object.assign({}, commonParams, {
   g_tk: 632036867
 })
 
+export const songLyric = Object.assign({}, commonParams, {
+  "-": "MusicJsonCallback_lrc",
+  pcachetime: +new Date(),
+  g_tk: 2066613704
+})
 
