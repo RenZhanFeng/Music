@@ -34,6 +34,6 @@ export const singerDetails = Object.assign({}, commonParams, {
 export const songLyric = Object.assign({}, commonParams, {
   "-": "MusicJsonCallback_lrc",
   pcachetime: +new Date(),
-  g_tk: 2066613704
+  g_tk: 2066613704,
 })
 

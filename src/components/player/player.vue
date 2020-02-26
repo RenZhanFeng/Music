@@ -19,7 +19,7 @@
             <i class="icon-back"></i>
           </div>
           <h1 class="title" v-html="currentSong.songInfo.name"></h1>
-          <h1 class="subtitle" v-html="currentSong.songInfo.singer[0].name"></h1>
+          <h1 class="subtitle" v-html="singerName"></h1>
         </div>
         <div class="middle">
           <div class="middle-l">
@@ -73,7 +73,7 @@
         </div>
         <div class="text">
           <h2 class="name" v-html="currentSong.songInfo.name"></h2>
-          <p class="desc" v-html="currentSong.songInfo.singer[0].name"></p>
+          <p class="desc" v-html="singerName"></p>
         </div>
         <div class="control">
           <!-- 传固定的值就不需要加： -->
@@ -93,7 +93,7 @@
     timeupdate是歌曲播放过程派发
     ended是歌曲播放结束时派发-->
     <audio
-      :src="'https://isure.stream.qqmusic.qq.com/C400'+currentSong.songInfo.file.media_mid+'.m4a?guid='+'1634402707'+'&vkey='+'1B228DE71276A2BB54D39D07ACFA50DAE5B901525BFD7EE4BA596F684BAFC1A46494D951B3B95BA06C239841ECB4A387B54F24BC9344DCA0'+'&uin=7467&fromtag=66'"
+      :src="'https://isure.stream.qqmusic.qq.com/C400'+currentSong.songInfo.file.media_mid+'.m4a?guid='+'1634402707'+'&vkey='+'C1D4A72CE696232B05834EBF238BAD75886A51CF79FCA43DB9368BB98F12945CC1D96242BC161CDF635058722A79538C0D034506278210BB'+'&uin=7467&fromtag=66'"
       ref="audio"
       @canplay="ready"
       @error="error"
@@ -110,8 +110,10 @@ import ProgressBar from "../../base/progress-bar/progress-bar";
 import ProgressCircle from "../../base/progress-circle/progress-circle";
 import { playMode } from "../../common/js/config";
 import { shuffle } from "../../common/js/util";
-import { songLyric, ERR_OK } from "../../common/js/config";
+import { commonParams, songLyric, ERR_OK } from "../../api/config";
 import axios from "axios";
+import {createSong} from '../../common/js/song'
+import {Base64} from 'js-base64'
 
 export default {
   data() {
@@ -119,7 +121,7 @@ export default {
       songReady: false,
       currentTime: 0, //歌曲已播放的时间
       radius: 32,
-      SongLyric: [] //歌词数据
+      SongL: [] //歌词数据
     };
   },
   components: {
@@ -136,6 +138,20 @@ export default {
       "mode",
       "sequenceList"
     ]),
+    // createSong(this.currentSong.songInfo){}
+    
+    //歌手名字
+    singerName() {
+      let ret = [];
+      if (!this.currentSong.songInfo.singer) {
+        return "";
+      } else {
+        for (let i = 0; i < this.currentSong.songInfo.singer.length; i++) {
+          ret.push(this.currentSong.songInfo.singer[i].name);
+        }
+        return ret.join("/");
+      }
+    },
     //控制暂停播放的按钮切换
     playIcon() {
       return this.playing ? "icon-pause" : "icon-play";
@@ -160,18 +176,32 @@ export default {
     }
   },
   created() {
-    this._getSongLyric();
+    
   },
   methods: {
+    shuju(list){
+      let ret =[]
+      if(list){
+        ret.push(createSong(list))
+      }
+      return ret[0].mid
+    },
     _getSongLyric() {
+      let SL = Object.assign({}, songLyric, {
+        songmid: this.shuju(this.currentSong.songInfo)
+      });
       axios
         .get("/songLyric/", {
-          params: songLyric
+          params: SL
         })
         .then(res => {
           if (res.data.code === ERR_OK) {
-            this.SongLyric = res;
-            console.log(this.SongLyric);
+            this.SongL = Base64.decode(res.data.lyric);
+            console.log(this.SongL)
+            //console.log(Object.prototype.toString.call(this.SongL))
+          } else {
+            return "没有歌词"
+            console.log("没有歌词,或者获取失败")
           }
         });
     },
@@ -361,6 +391,7 @@ export default {
       }
       this.$nextTick(() => {
         this.$refs.audio.play();
+        this._getSongLyric();
       });
     },
     //实现歌曲的暂停和播放
