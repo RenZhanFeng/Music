@@ -21,7 +21,12 @@
           <h1 class="title" v-html="currentSong.songInfo.name"></h1>
           <h1 class="subtitle" v-html="singerName"></h1>
         </div>
-        <div class="middle">
+        <div
+          class="middle"
+          @touchstart.prevent="middleTouchStart"
+          @touchmove.prevent="middleTouchMove"
+          @touchend.prevent="middleTouchEnd"
+        >
           <div class="middle-l">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCls">
@@ -33,8 +38,27 @@
               </div>
             </div>
           </div>
+
+          <div class="middle-r" ref="wrapper">
+            <div class="lyric-wrapper content">
+              <div v-if="SongL">
+                <p
+                  class="text"
+                  v-for="(item,index) in SongL.lines"
+                  :key="index"
+                  ref="lyricLine"
+                  :class="{'current':currentLineNum === index}"
+                >{{item.txt}}</p>
+              </div>
+            </div>
+          </div>
         </div>
+
         <div class="bottom">
+          <div class="dot-wrapper">
+            <span class="dot" :class="{'active':currentShow === 'cd'}"></span>
+            <span class="dot" :class="{'active':currentShow === 'lyric'}"></span>
+          </div>
           <div class="progress-wrapper">
             <span class="time time-l">{{format(currentTime)}}</span>
             <div class="progress-bar-wrapper">
@@ -93,7 +117,7 @@
     timeupdate是歌曲播放过程派发
     ended是歌曲播放结束时派发-->
     <audio
-      :src="'https://isure.stream.qqmusic.qq.com/C400'+currentSong.songInfo.file.media_mid+'.m4a?guid='+'1634402707'+'&vkey='+'C1D4A72CE696232B05834EBF238BAD75886A51CF79FCA43DB9368BB98F12945CC1D96242BC161CDF635058722A79538C0D034506278210BB'+'&uin=7467&fromtag=66'"
+      :src="'https://isure.stream.qqmusic.qq.com/C400'+currentSong.songInfo.file.media_mid+'.m4a?guid='+'1634402707'+'&vkey='+'04716C28E7DBE34D94812F3D9A70B99F99E2BEF9259DD52DD1AD84833D1B68CCB90C6F7FE58EFD9649ED41F98E0A01E0F1A4D25C3BB61F15'+'&uin=7467&fromtag=66'"
       ref="audio"
       @canplay="ready"
       @error="error"
@@ -112,8 +136,10 @@ import { playMode } from "../../common/js/config";
 import { shuffle } from "../../common/js/util";
 import { commonParams, songLyric, ERR_OK } from "../../api/config";
 import axios from "axios";
-import {createSong} from '../../common/js/song'
-import {Base64} from 'js-base64'
+import { createSong } from "../../common/js/song";
+import { Base64 } from "js-base64";
+import Lyric from "lyric-parser";
+import BScroll from "better-scroll";
 
 export default {
   data() {
@@ -121,12 +147,15 @@ export default {
       songReady: false,
       currentTime: 0, //歌曲已播放的时间
       radius: 32,
-      SongL: [] //歌词数据
+      SongL: [], //歌词数据
+      currentLineNum: 0, //当前歌词所在的行
+      currentShow: "cd" //cd和歌词之间的切换
     };
   },
   components: {
     ProgressBar,
-    ProgressCircle
+    ProgressCircle,
+    BScroll
   },
   computed: {
     ...mapGetters([
@@ -139,7 +168,7 @@ export default {
       "sequenceList"
     ]),
     // createSong(this.currentSong.songInfo){}
-    
+
     //歌手名字
     singerName() {
       let ret = [];
@@ -176,16 +205,18 @@ export default {
     }
   },
   created() {
-    
+    this.touch = {};
   },
+  mounted() {},
   methods: {
-    shuju(list){
-      let ret =[]
-      if(list){
-        ret.push(createSong(list))
+    shuju(list) {
+      let ret = [];
+      if (list) {
+        ret.push(createSong(list));
       }
-      return ret[0].mid
+      return ret[0].mid; //获取歌曲的mid值
     },
+    //获取歌词数据
     _getSongLyric() {
       let SL = Object.assign({}, songLyric, {
         songmid: this.shuju(this.currentSong.songInfo)
@@ -196,14 +227,32 @@ export default {
         })
         .then(res => {
           if (res.data.code === ERR_OK) {
-            this.SongL = Base64.decode(res.data.lyric);
-            console.log(this.SongL)
-            //console.log(Object.prototype.toString.call(this.SongL))
+            //使用js-Base64库来解码数据
+            //使用lyric-parser库来转换数据，转换成Lyric对象
+            this.SongL = new Lyric(
+              Base64.decode(res.data.lyric),
+              this.handleLyric
+            );
+            if (this.playing) {
+              this.SongL.play();
+            }
+            this.scroll = new BScroll(this.$refs.wrapper);
+            console.log(this.SongL);
           } else {
-            return "没有歌词"
-            console.log("没有歌词,或者获取失败")
+            return "没有歌词";
+            console.log("没有歌词,或者获取失败");
           }
         });
+    },
+    //lineNum是播放的行数，txt是歌词
+    handleLyric({ lineNum, txt }) {
+      this.currentLineNum = lineNum;
+      if (lineNum > 5) {
+        let lineEl = this.$refs.lyricLine[lineNum - 5];
+        this.scroll.scrollToElement(lineEl, 1000);
+      } else {
+        this.$refs.wrapper.scrollTo(0, 0, 1000);
+      }
     },
     //对Mutations的映射
     ...mapMutations({
@@ -380,7 +429,16 @@ export default {
     loop() {
       this.$refs.audio.currentTime = 0;
       this.$refs.audio.play();
-    }
+    },
+    //滑动切换显示歌词或者CD
+    middleTouchStart(e) {
+      this.touch.initiated = true;
+      const touch = e.touches[0]
+      this.touch.startX = touch.pageX
+      this.touch.startY = touch.pageY
+    },
+    middleTouchMove(e) {},
+    middleTouchEnd(e) {}
   },
   watch: {
     //检测currentSong的变化，发生变化就调用audio的play方法播放音乐
@@ -659,6 +717,52 @@ i {
 
 .progress-bar-wrapper {
   flex: 1;
+}
+
+.middle-r {
+  display: inline-block;
+  vertical-align: top;
+  width: 100%;
+  height: 100%;
+  overflow: hidden;
+}
+
+.lyric-wrapper {
+  width: 80%;
+  margin: 0 auto;
+  overflow: hidden;
+  text-align: center;
+}
+
+.text {
+  line-height: 32px;
+  color: $color-text-l;
+  font-size: $font-size-medium;
+}
+
+.current {
+  color: $color-text;
+}
+
+.dot-wrapper {
+  text-align: center;
+  font-size: 0;
+}
+
+.dot {
+  display: inline-block;
+  vertical-align: middle;
+  margin: 0 4px;
+  width: 8px;
+  height: 8px;
+  border-radius: 50%;
+  background: $color-text-l;
+}
+
+.active {
+  width: 20px;
+  border-radius: 5px;
+  background: $color-text-ll;
 }
 
 // 动画效果
