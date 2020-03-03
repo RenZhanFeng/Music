@@ -34,11 +34,13 @@
 import Bscroll from "better-scroll";
 import Loading from "../../../base/loading/loading";
 import { getData, addClass } from "../../../common/js/dom";
+import { playlistMixin } from "../../../common/js/mixin";
 
 const HOT_NAME = "热门";
 const HOT_SINGER_LEN = 10;
 
 export default {
+    mixins:[playlistMixin],
   name: "singer",
   props: {
     list: {
@@ -68,6 +70,10 @@ export default {
     }
   },
   methods: {
+    handlePlaylist(playlist) {
+      const bottom = playlist.length > 0 ? "60px" : "";
+      this.$refs.wrapper.style.bottom = bottom
+    },
     selectItem(item){
       this.$emit('select',item)
     },
@@ -95,6 +101,7 @@ export default {
 
 <style scoped lang="stylus">
 @import '../../../common/stylus/variable';
+
 
 .singer {
   position: fixed;

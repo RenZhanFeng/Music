@@ -1,5 +1,5 @@
 <template>
-  <div class="recommend">
+  <div class="recommend" ref="recommend">
     <div class="recommend-content wrapper">
       <div class="content">
         <div class="slider-wrapper">
@@ -21,8 +21,10 @@ import Swiper from "./components/Swiper";
 import SongList from "./components/SongList";
 import BScroll from "better-scroll";
 import { commonParams, recommendData, ERR_OK } from "../../api/config";
+import { playlistMixin } from "../../common/js/mixin";
 
 export default {
+  mixins: [playlistMixin],
   name: "recommend",
   components: {
     Swiper,
@@ -42,6 +44,10 @@ export default {
     this._getRecommend();
   },
   methods: {
+     handlePlaylist(playlist) {
+      const bottom = playlist.length > 0 ? "60px" : "";
+      this.$refs.recommend.style.bottom = bottom
+    },
     _getRecommend() {
       axios
         .get("/api/", {

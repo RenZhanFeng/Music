@@ -33,8 +33,10 @@
 import BScroll from "better-scroll";
 import Loading from "../../../base/loading/loading";
 import SongList from "../../../base/song-list/song-list";
-import {mapActions} from 'vuex'
+import { mapActions } from "vuex";
+import { playlistMixin } from "../../../common/js/mixin";
 export default {
+  mixins: [playlistMixin],
   props: {
     list: {
       type: Array,
@@ -64,31 +66,32 @@ export default {
     }
   },
   methods: {
+    handlePlaylist(playlist) {
+      const bottom = playlist.length > 0 ? "60px" : "";
+      this.$refs.list.style.bottom = bottom
+    },
     back() {
       this.$router.back();
     },
-    
+
     scrolls(e) {
       this.scrollY = e.y;
     },
-    selectItem(item,index) {
-      console.log(index)
-      console.log(item)
+    selectItem(item, index) {
+      console.log(index);
+      console.log(item);
       this.selectPlay({
-        list:this.list,
+        list: this.list,
         index
-      })
+      });
     },
     //随机随机播放全部功能
     random() {
       this.randomPlay({
-        list:this.list
-      })
+        list: this.list
+      });
     },
-    ...mapActions([
-      'selectPlay',
-      'randomPlay'
-    ])
+    ...mapActions(["selectPlay", "randomPlay"])
   },
   watch: {
     scrollY(newY) {
@@ -127,9 +130,7 @@ export default {
       this.$refs.bgImage.style["webkitTransform"] = `scale(${scale})`;
     }
   },
-  created() {
-    
-  },
+  created() {},
   mounted() {
     this.imageHeight = this.$refs.bgImage.clientHeight;
     this.minTranslateY = -this.imageHeight + this.$refs.title.clientHeight;

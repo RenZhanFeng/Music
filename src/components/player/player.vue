@@ -25,9 +25,9 @@
           class="middle"
           @touchstart.prevent="middleTouchStart"
           @touchmove.prevent="middleTouchMove"
-          @touchend.prevent="middleTouchEnd"
+          @touchend="middleTouchEnd"
         >
-          <div class="middle-l">
+          <div class="middle-l" ref="middleL">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCls">
                 <img
@@ -36,6 +36,9 @@
                   class="image"
                 />
               </div>
+            </div>
+            <div class="playing-lyric-wrapper">
+              <div class="playing-lyric">{{playingLyric}}</div>
             </div>
           </div>
 
@@ -117,7 +120,7 @@
     timeupdate是歌曲播放过程派发
     ended是歌曲播放结束时派发-->
     <audio
-      :src="'https://isure.stream.qqmusic.qq.com/C400'+currentSong.songInfo.file.media_mid+'.m4a?guid='+'1634402707'+'&vkey='+'04716C28E7DBE34D94812F3D9A70B99F99E2BEF9259DD52DD1AD84833D1B68CCB90C6F7FE58EFD9649ED41F98E0A01E0F1A4D25C3BB61F15'+'&uin=7467&fromtag=66'"
+      :src="'https://isure.stream.qqmusic.qq.com/C400'+currentSong.songInfo.file.media_mid+'.m4a?guid='+'1634402707'+'&vkey='+'3BDCED0B2F5FEA8E63F656D92B7ADC375131C739E5C8D589BB0407085D6A294933523A75A2D0C1F9C2CC4D3612A8E64D54A429C6B56A8C2E'+'&uin=7467&fromtag=66'"
       ref="audio"
       @canplay="ready"
       @error="error"
@@ -147,9 +150,10 @@ export default {
       songReady: false,
       currentTime: 0, //歌曲已播放的时间
       radius: 32,
-      SongL: [], //歌词数据
+      SongL: null, //歌词数据
       currentLineNum: 0, //当前歌词所在的行
-      currentShow: "cd" //cd和歌词之间的切换
+      currentShow: "cd", //cd和歌词之间的切换
+      playingLyric: "" //当前歌词所在的行的歌词
     };
   },
   components: {
@@ -237,11 +241,16 @@ export default {
               this.SongL.play();
             }
             this.scroll = new BScroll(this.$refs.wrapper);
-            console.log(this.SongL);
+            //console.log(this.SongL);
           } else {
             return "没有歌词";
             console.log("没有歌词,或者获取失败");
           }
+        })
+        .catch(() => {
+          this.SongL = null;
+          this.playingLyric = "";
+          this.currentLineNum = 0;
         });
     },
     //lineNum是播放的行数，txt是歌词
@@ -253,6 +262,7 @@ export default {
       } else {
         this.$refs.wrapper.scrollTo(0, 0, 1000);
       }
+      this.playingLyric = txt;
     },
     //对Mutations的映射
     ...mapMutations({
@@ -271,20 +281,30 @@ export default {
     },
     //控制playing的取值
     togglePlaying() {
+      if (!this.songReady) {
+        return;
+      }
       this.setPlayingState(!this.playing);
+      if (this.SongL) {
+        this.SongL.togglePlay();
+      }
     },
     //修改currentIndex的值来实现下一首和上一首
     prev() {
       if (!this.songReady) {
         return;
       }
-      let index = this.currentIndex - 1;
-      if (index === -1) {
-        index = this.playlist.length - 1;
-      }
-      this.setCurrentIndex(index);
-      if (!this.playing) {
-        this.togglePlaying();
+      if (this.playlist.length === 1) {
+        this.loop();
+      } else {
+        let index = this.currentIndex - 1;
+        if (index === -1) {
+          index = this.playlist.length - 1;
+        }
+        this.setCurrentIndex(index);
+        if (!this.playing) {
+          this.togglePlaying();
+        }
       }
       this.songReady = false;
     },
@@ -292,13 +312,17 @@ export default {
       if (!this.songReady) {
         return;
       }
-      let index = this.currentIndex + 1;
-      if (index === this.playlist.length) {
-        index = 0;
-      }
-      this.setCurrentIndex(index);
-      if (!this.playing) {
-        this.togglePlaying();
+      if (this.playlist.length === 1) {
+        this.loop();
+      } else {
+        let index = this.currentIndex + 1;
+        if (index === this.playlist.length) {
+          index = 0;
+        }
+        this.setCurrentIndex(index);
+        if (!this.playing) {
+          this.togglePlaying();
+        }
       }
       this.songReady = false;
     },
@@ -335,6 +359,9 @@ export default {
         this.currentSong.songInfo.interval * percent;
       if (!this.playing) {
         this.togglePlaying();
+      }
+      if (this.SongL) {
+        this.SongL.seek(this.$refs.audio.currentTime * 1000);
       }
     },
     //专辑图片的弹出缩回动画
@@ -429,16 +456,72 @@ export default {
     loop() {
       this.$refs.audio.currentTime = 0;
       this.$refs.audio.play();
+      if (this.SongL) {
+        this.SongL.seek(0);
+      }
     },
     //滑动切换显示歌词或者CD
     middleTouchStart(e) {
       this.touch.initiated = true;
-      const touch = e.touches[0]
-      this.touch.startX = touch.pageX
-      this.touch.startY = touch.pageY
+      // 用来判断是否是一次移动
+     // this.touch.moved = false;
+      const touch = e.touches[0];
+      this.touch.startX = touch.pageX;
+      this.touch.startY = touch.pageY;
     },
-    middleTouchMove(e) {},
-    middleTouchEnd(e) {}
+    middleTouchMove(e) {
+      const touch = e.touches[0];
+      // if (!this.touch.initiated) {
+      //   return;
+      // }
+      const deltaX = touch.pageX - this.touch.startX;
+      const deltaY = touch.pageY - this.touch.startY;
+      //避免滚动歌词的时候触发
+      if (Math.abs(deltaY) > Math.abs(deltaX)) {
+        return;
+      }
+      // if (!this.touch.moved) {
+      //   this.touch.moved = true;
+      // }
+      const left = this.currentShow === "cd" ? 0 : -window.innerWidth;
+      const offset = Math.min(0, Math.max(-window.innerWidth, left + deltaX));
+      this.touch.percent = Math.abs(offset / window.innerWidth);
+      this.$refs.wrapper.style.transform = `translate3d(${offset}px,0,0)`;
+      this.$refs.wrapper.style.transition = 0;
+      this.$refs.middleL.style.opacity = 1 - this.touch.percent;
+      this.$refs.middleL.style.transition = 0;
+    },
+    middleTouchEnd(e) {
+      // if (!this.touch.moved) {
+      //   return;
+      // }
+      let offset;
+      let opacity;
+      const time = 500;
+      if (this.currentShow === "cd") {
+        if (this.touch.percent > 0.1) {
+          offset = -window.innerWidth;
+          opacity = 0;
+          this.currentShow = "lyric";
+        } else {
+          offset = 0;
+          opacity = 1;
+        }
+      } else {
+        if (this.touch.percent < 0.9) {
+          offset = 0;
+          this.currentShow = "cd";
+          opacity = 1;
+        } else {
+          offset = -window.innerWidth;
+          opacity = 0;
+        }
+      }
+      this.$refs.wrapper.style.transform = `translate3d(${offset}px,0,0)`;
+      this.$refs.wrapper.style.transition = `${time}ms`;
+      this.$refs.middleL.style.opacity = opacity;
+      this.$refs.middleL.style.transition = `${time}ms`;
+    }
   },
   watch: {
     //检测currentSong的变化，发生变化就调用audio的play方法播放音乐
@@ -447,10 +530,20 @@ export default {
       if (oldSong.songInfo === newSong.songInfo) {
         return;
       }
-      this.$nextTick(() => {
+      if (this.SongL) {
+        this.SongL.stop();
+        this.currentTime = 0;
+        this.currentLineNum = 0;
+      }
+      // this.$nextTick(() => {
+      //   this.$refs.audio.play();
+      //   this._getSongLyric();
+      // });
+      clearTimeout(this.timer);
+      this.timer = setTimeout(() => {
         this.$refs.audio.play();
         this._getSongLyric();
-      });
+      }, 1000);
     },
     //实现歌曲的暂停和播放
     playing(newPlaying) {
@@ -763,6 +856,20 @@ i {
   width: 20px;
   border-radius: 5px;
   background: $color-text-ll;
+}
+
+.playing-lyric-wrapper {
+  width: 80%;
+  margin: 30px auto 0 auto;
+  overflow: hidden;
+  text-align: center;
+}
+
+.playing-lyric {
+  height: 20px;
+  line-height: 20px;
+  font-size: $font-size-medium;
+  color: $color-text-l;
 }
 
 // 动画效果
