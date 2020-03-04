@@ -139,7 +139,7 @@ import { playMode } from "../../common/js/config";
 import { shuffle } from "../../common/js/util";
 import { commonParams, songLyric, ERR_OK } from "../../api/config";
 import axios from "axios";
-import { createSong } from "../../common/js/song";
+import { createSong1 } from "../../common/js/song";
 import { Base64 } from "js-base64";
 import Lyric from "lyric-parser";
 import BScroll from "better-scroll";
@@ -171,7 +171,7 @@ export default {
       "mode",
       "sequenceList"
     ]),
-    // createSong(this.currentSong.songInfo){}
+  
 
     //歌手名字
     singerName() {
@@ -216,7 +216,7 @@ export default {
     shuju(list) {
       let ret = [];
       if (list) {
-        ret.push(createSong(list));
+        ret.push(createSong1(list));
       }
       return ret[0].mid; //获取歌曲的mid值
     },

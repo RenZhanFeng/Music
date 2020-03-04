@@ -12,6 +12,7 @@
         </div>
       </div>
     </div>
+    <router-view></router-view>
   </div>
 </template>
 
@@ -44,9 +45,9 @@ export default {
     this._getRecommend();
   },
   methods: {
-     handlePlaylist(playlist) {
+    handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? "60px" : "";
-      this.$refs.recommend.style.bottom = bottom
+      this.$refs.recommend.style.bottom = bottom;
     },
     _getRecommend() {
       axios

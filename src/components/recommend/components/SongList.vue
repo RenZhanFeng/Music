@@ -1,7 +1,7 @@
 <template>
   <div class="songList">
     <ul>
-      <li class="item" v-for="item in list" :key="item.content_id">
+      <li class="item" v-for="item in list" :key="item.content_id" @click="selectItem(item)">
         <div class="icon">
           <img v-lazy="item.cover" alt="img" />
         </div>
@@ -17,6 +17,7 @@
 
 <script>
 import Loading from "../../../base/loading/loading";
+import {mapMutations} from "vuex";
 export default {
   name: "SongList",
   props: {
@@ -24,6 +25,20 @@ export default {
   },
   components: {
     Loading
+  },
+  methods: {
+    ...mapMutations({
+      setDisc:'SET_DISC'
+    }),
+    selectItem(item) {
+      this.$router.push({
+        path:`/recommend/${item.content_id}`
+      })
+      this.setDisc(item)
+    }
+  },
+  mounted(){
+    console.log(this.list)
   }
 };
 </script>

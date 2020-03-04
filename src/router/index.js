@@ -5,6 +5,7 @@ import Rank from "../components/rank/rank";
 import Search from "../components/search/search";
 import Singer from "../components/singer/singer";
 import SingerDetail from '../components/singer/singer-detail'
+import Disc from '../components/disc/disc'
 
 
 Vue.use(VueRouter);
@@ -16,12 +17,16 @@ const routes = [
   },
   {
     path: '/recommend',
-    component: Recommend
+    component: Recommend,
+    children: [{  //二级路由
+      path: ':id',
+      component: Disc
+    }]
   },
   {
     path: '/singer',
     component: Singer,
-    children: [{
+    children: [{  //二级路由
       path: ':id',
       component: SingerDetail
     }]

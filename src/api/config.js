@@ -1,3 +1,5 @@
+import jsonp from '../common/js/jsonp'
+import axios from 'axios'
 export const commonParams = {
   loginUin: 947625259,
   hostUin: 0,
@@ -7,6 +9,10 @@ export const commonParams = {
   notice: 0,
   platform: 'yqq.json',
   needNewCode: 0,
+}
+
+export const options = {
+  param: 'jsonpCallback'
 }
 
 export const ERR_OK = 0
@@ -36,4 +42,14 @@ export const songLyric = Object.assign({}, commonParams, {
   pcachetime: +new Date(),
   g_tk: 2066613704,
 })
+
+export const DiscList = Object.assign({}, commonParams, {
+  type: 1,
+  json: 1,
+  utf8: 1,
+  onlysong: 0,
+  new_format: 1,
+  g_tk: 2066613704,
+})
+
 
