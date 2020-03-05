@@ -2,7 +2,7 @@
 //1.类的扩展性比对象好
 //2.把一些代码集中在一个地方维护
 export default class Song {
-  constructor({ id, mid, singer, name, album, duration, image, url }) {
+  constructor({ id, mid, singer, name, album, duration, image, url, }) {
     this.id = id
     this.mid = mid
     this.singer = singer
@@ -35,9 +35,10 @@ export function createSong(musicData) {
     album: musicData.album.name,
     duration: musicData.interval,
     image: `https://y.gtimg.cn/music/photo_new/T002R300x300M000${musicData.album.mid}.jpg?max_age=2592000`,
-    url: `http://ws.stream.qqmusic.qq.com/${musicData.id}.m4a?fromtag=46`
+    // url: `https://isure.stream.qqmusic.qq.com/C400'+currentSong.file.media_mid+'.m4a?guid='+'1634402707'+'&vkey='+'3BDCED0B2F5FEA8E63F656D92B7ADC375131C739E5C8D589BB0407085D6A294933523A75A2D0C1F9C2CC4D3612A8E64D54A429C6B56A8C2E'+'&uin=7467&fromtag=66`
   })
 }
+
 
 function filterSinger(singer) {
   let ret = []

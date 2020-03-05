@@ -10,6 +10,7 @@ import { mapGetters } from "vuex";
 import axios from "axios";
 import { singerDetails, ERR_OK } from "../../api/config";
 import MusicList from "./components/music-list";
+import { createSong } from "../../common/js/song";
 
 export default {
   name: "SingerDetail",
@@ -57,17 +58,28 @@ export default {
         })
         .then(res => {
           if (res.data.code === ERR_OK) {
-            this.song = res.data.singerSongList.data.songList;
+            console.log(res.data.singerSongList.data.songList)
+            this.song = this._normalizeSongs(
+              res.data.singerSongList.data.songList
+            );
+            console.log( this.song)
           }
         });
+    },
+    _normalizeSongs(list) {
+      let ret = [];
+      list.forEach(musicData => {
+        if (musicData.songInfo.id && musicData.songInfo.mid) {
+          ret.push(createSong(musicData.songInfo));
+        }
+      });
+      return ret;
     }
   }
 };
-
 </script>
 
 <style scoped lang="stylus" rel="stylesheet/stylus">
-
 .slide-enter-active, .slide-leave-active {
   transition: all 0.3s;
 }

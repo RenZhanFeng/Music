@@ -3,13 +3,13 @@
     <ul>
       <li
         v-for="(item,index) in list"
-        :key="item.songInfo.id"
+        :key="item.id"
         class="item"
         @click="selectItem(item,index)"
       >
         <div class="content">
-          <h2 class="name">{{item.songInfo.name}}</h2>
-          <p class="desc">{{item.songInfo.singer[0].name}}·{{item.songInfo.album.name}}</p>
+          <h2 class="name">{{item.name}}</h2>
+          <p class="desc">{{item.singer}}</p>
         </div>
       </li>
     </ul>

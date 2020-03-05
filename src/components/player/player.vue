@@ -10,7 +10,7 @@
       <div class="normal-player" v-show="fullScreen">
         <div class="background">
           <img
-            :src="'https://y.gtimg.cn/music/photo_new/T002R300x300M000'+currentSong.songInfo.album.mid+'.jpg?max_age=2592000'"
+            :src="currentSong.image"
             alt="img"
           />
         </div>
@@ -18,8 +18,8 @@
           <div class="back" @click="back">
             <i class="icon-back"></i>
           </div>
-          <h1 class="title" v-html="currentSong.songInfo.name"></h1>
-          <h1 class="subtitle" v-html="singerName"></h1>
+          <h1 class="title" v-html="currentSong.name"></h1>
+          <h1 class="subtitle" v-html="currentSong.singer"></h1>
         </div>
         <div
           class="middle"
@@ -31,7 +31,7 @@
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCls">
                 <img
-                  :src="'https://y.gtimg.cn/music/photo_new/T002R300x300M000'+currentSong.songInfo.album.mid+'.jpg?max_age=2592000'"
+                  :src="currentSong.image"
                   alt="img"
                   class="image"
                 />
@@ -67,7 +67,7 @@
             <div class="progress-bar-wrapper">
               <progress-bar :percent="percent" @percentChange="onProgressBarChange"></progress-bar>
             </div>
-            <span class="time time-r">{{format(currentSong.songInfo.interval)}}</span>
+            <span class="time time-r">{{format(currentSong.interval)}}</span>
           </div>
           <div class="operators">
             <div class="icon i-left" @click="changeMode">
@@ -94,13 +94,13 @@
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon" :class="cdCls">
           <img
-            :src="'https://y.gtimg.cn/music/photo_new/T002R300x300M000'+currentSong.songInfo.album.mid+'.jpg?max_age=2592000'"
+            :src="currentSong.image"
             alt="img"
           />
         </div>
         <div class="text">
-          <h2 class="name" v-html="currentSong.songInfo.name"></h2>
-          <p class="desc" v-html="singerName"></p>
+          <h2 class="name" v-html="currentSong.name"></h2>
+          <p class="desc" v-html="currentSong.singer"></p>
         </div>
         <div class="control">
           <!-- 传固定的值就不需要加： -->
@@ -120,7 +120,7 @@
     timeupdate是歌曲播放过程派发
     ended是歌曲播放结束时派发-->
     <audio
-      :src="'https://isure.stream.qqmusic.qq.com/C400'+currentSong.songInfo.file.media_mid+'.m4a?guid='+'1634402707'+'&vkey='+'3BDCED0B2F5FEA8E63F656D92B7ADC375131C739E5C8D589BB0407085D6A294933523A75A2D0C1F9C2CC4D3612A8E64D54A429C6B56A8C2E'+'&uin=7467&fromtag=66'"
+      src="111"
       ref="audio"
       @canplay="ready"
       @error="error"
@@ -176,11 +176,11 @@ export default {
     //歌手名字
     singerName() {
       let ret = [];
-      if (!this.currentSong.songInfo.singer) {
+      if (!this.currentSong.singer) {
         return "";
       } else {
-        for (let i = 0; i < this.currentSong.songInfo.singer.length; i++) {
-          ret.push(this.currentSong.songInfo.singer[i].name);
+        for (let i = 0; i < this.currentSong.singer.length; i++) {
+          ret.push(this.currentSong.singer[i].name);
         }
         return ret.join("/");
       }
@@ -197,7 +197,7 @@ export default {
       return this.playing ? "play" : "play pause";
     },
     percent() {
-      return this.currentTime / this.currentSong.songInfo.interval;
+      return this.currentTime / this.currentSong.interval;
     },
     //播放模式切换
     iconMode() {
@@ -210,20 +210,14 @@ export default {
   },
   created() {
     this.touch = {};
+    console.log(this.currentSong)
   },
   mounted() {},
   methods: {
-    shuju(list) {
-      let ret = [];
-      if (list) {
-        ret.push(createSong1(list));
-      }
-      return ret[0].mid; //获取歌曲的mid值
-    },
     //获取歌词数据
     _getSongLyric() {
       let SL = Object.assign({}, songLyric, {
-        songmid: this.shuju(this.currentSong.songInfo)
+        songmid: this.currentSong.mid
       });
       axios
         .get("/songLyric/", {
@@ -356,7 +350,7 @@ export default {
     },
     onProgressBarChange(percent) {
       this.$refs.audio.currentTime =
-        this.currentSong.songInfo.interval * percent;
+        this.currentSong.interval * percent;
       if (!this.playing) {
         this.togglePlaying();
       }
@@ -440,7 +434,7 @@ export default {
     resetCurrentIndex(list) {
       //findIndex是ES6的语法
       let index = list.findIndex(item => {
-        return item.songInfo.id === this.currentSong.songInfo.id;
+        return item.id === this.currentSong.id;
       });
       this.setCurrentIndex(index);
     },
@@ -527,7 +521,7 @@ export default {
     //检测currentSong的变化，发生变化就调用audio的play方法播放音乐
     currentSong(oldSong, newSong) {
       //避免切换播放模式的时候也触发
-      if (oldSong.songInfo === newSong.songInfo) {
+      if (oldSong.id === newSong.id) {
         return;
       }
       if (this.SongL) {
@@ -827,7 +821,7 @@ i {
   text-align: center;
 }
 
-.text {
+.lyric-wrapper .text {
   line-height: 32px;
   color: $color-text-l;
   font-size: $font-size-medium;
