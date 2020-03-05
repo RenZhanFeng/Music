@@ -67,7 +67,7 @@
             <div class="progress-bar-wrapper">
               <progress-bar :percent="percent" @percentChange="onProgressBarChange"></progress-bar>
             </div>
-            <span class="time time-r">{{format(currentSong.interval)}}</span>
+            <span class="time time-r">{{format(currentSong.duration)}}</span>
           </div>
           <div class="operators">
             <div class="icon i-left" @click="changeMode">
@@ -98,7 +98,7 @@
             alt="img"
           />
         </div>
-        <div class="text">
+        <div class="textmini">
           <h2 class="name" v-html="currentSong.name"></h2>
           <p class="desc" v-html="currentSong.singer"></p>
         </div>
@@ -120,7 +120,7 @@
     timeupdate是歌曲播放过程派发
     ended是歌曲播放结束时派发-->
     <audio
-      src="111"
+      :src="currentSong.url"
       ref="audio"
       @canplay="ready"
       @error="error"
@@ -197,7 +197,7 @@ export default {
       return this.playing ? "play" : "play pause";
     },
     percent() {
-      return this.currentTime / this.currentSong.interval;
+      return this.currentTime / this.currentSong.duration;
     },
     //播放模式切换
     iconMode() {
@@ -210,7 +210,7 @@ export default {
   },
   created() {
     this.touch = {};
-    console.log(this.currentSong)
+    //console.log(this.currentSong)
   },
   mounted() {},
   methods: {
@@ -303,9 +303,6 @@ export default {
       this.songReady = false;
     },
     next() {
-      if (!this.songReady) {
-        return;
-      }
       if (this.playlist.length === 1) {
         this.loop();
       } else {
@@ -350,7 +347,7 @@ export default {
     },
     onProgressBarChange(percent) {
       this.$refs.audio.currentTime =
-        this.currentSong.interval * percent;
+        this.currentSong.duration * percent;
       if (!this.playing) {
         this.togglePlaying();
       }
@@ -428,7 +425,6 @@ export default {
       }
       this.resetCurrentIndex(list);
       this.setPlayist(list);
-      //console.log(this.currentSong);
     },
     //当playList改变的时候也要让currentIndex一起改变，来保证currentSong的ID不变
     resetCurrentIndex(list) {
@@ -537,7 +533,7 @@ export default {
       this.timer = setTimeout(() => {
         this.$refs.audio.play();
         this._getSongLyric();
-      }, 1000);
+      }, 500);
     },
     //实现歌曲的暂停和播放
     playing(newPlaying) {
@@ -734,7 +730,7 @@ i {
   height: 40px;
 }
 
-.text {
+.textmini {
   display: flex;
   flex-direction: column;
   justify-content: center;
@@ -821,13 +817,13 @@ i {
   text-align: center;
 }
 
-.lyric-wrapper .text {
+ .text {
   line-height: 32px;
   color: $color-text-l;
   font-size: $font-size-medium;
 }
 
-.current {
+ .current {
   color: $color-text;
 }
 
