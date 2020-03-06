@@ -2,7 +2,7 @@
   <div class="rank" ref="rank">
     <div class="toplist" ref="wrapper">
       <ul class="content">
-        <li class="item" v-for="item in topList" :key="item.topId">
+        <li class="item" v-for="item in topList" :key="item.topId" @click="selectItem(item)">
           <div class="icon">
             <img :src="item.frontPicUrl" alt="img" />
           </div>
@@ -26,6 +26,7 @@ import { rankTopList, ERR_OK } from "../../api/config";
 import BScroll from "better-scroll";
 import Loading from "../../base/loading/loading";
 import { playlistMixin } from "../../common/js/mixin";
+import { mapMutations } from "vuex";
 export default {
   mixins: [playlistMixin],
   name: "rank",
@@ -41,6 +42,15 @@ export default {
     this.scroll = new BScroll(this.$refs.wrapper);
   },
   methods: {
+    ...mapMutations({
+      setTopList: "SET_TOP_LIST"
+    }),
+    selectItem(item) {
+      this.$router.push({
+        path: `/rank/${item.topId}`
+      });
+      this.setTopList(item)
+    },
     handlePlaylist(playlist) {
       const bottom = playlist.length ? "60px" : "";
       this.$refs.rank.style.bottom = bottom;
@@ -55,7 +65,7 @@ export default {
               this.topList.push(all[i].toplist[j]);
             }
           }
-          console.log(this.topList);
+         //console.log(this.topList);
         } else {
           console.log("获取数据失败");
         }

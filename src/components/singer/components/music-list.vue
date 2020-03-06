@@ -20,7 +20,7 @@
     <!--@scroll="scrolls"无效！！！  -->
     <div class="wrapper" ref="list">
       <div class="song-list-wrapper content">
-        <song-list :list="list" @select="selectItem"></song-list>
+        <song-list :list="list" :rank="rank" @select="selectItem"></song-list>
       </div>
       <div class="loading-container" v-show="!list.length">
         <loading></loading>
@@ -49,6 +49,10 @@ export default {
     bgImage: {
       type: String,
       default: ""
+    },
+    rank: {
+      type: Boolean,
+      default: false
     }
   },
   data() {
@@ -68,7 +72,7 @@ export default {
   methods: {
     handlePlaylist(playlist) {
       const bottom = playlist.length > 0 ? "60px" : "";
-      this.$refs.list.style.bottom = bottom
+      this.$refs.list.style.bottom = bottom;
     },
     back() {
       this.$router.back();
