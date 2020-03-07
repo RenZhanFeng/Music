@@ -65,3 +65,35 @@ export function rankDetailList(topId, period) {
     data: `{"detail":{"module":"musicToplist.ToplistInfoServer","method":"GetDetail","param":{"topId":${topId},"offset":0,"num":20,"period":"${period}"}},"comm":{"ct":24,"cv":0}}`
   })
 }
+
+export const searchHotKye = {
+  'cgiKey': 'GetHomePage',
+  '_': 1583563381935,
+  data: '{"comm":{"g_tk":2066613704,"uin":947625259,"format":"json","inCharset":"utf-8","outCharset":"utf-8","notice":0,"platform":"h5","needNewCode":1},"MusicHallHomePage":{"module":"music.musicHall.MusicHallPlatform","method":"MobileWebHome","param":{"ShelfId":[101,102,161]}},"hotkey":{"module":"tencent_musicsoso_hotkey.HotkeyService","method":"GetHotkeyForQQMusicMobile","param":{"remoteplace":"txt.miniapp.wxada7aab80ba27074","searchid":"1559616839293"}}}'
+}
+
+export function searchResult(query, page, zhida) {
+  return {
+    '_': 1583570067187,
+    g_tk: 2066613704,
+    uin: 947625259,
+    format: 'json',
+    inCharset: 'utf-8',
+    outCharset: 'utf-8',
+    notice: 0,
+    platform: 'h5',
+    needNewCode: 1,
+    w: query, //输入框输入的内容
+    zhidaqu: 1,
+    catZhida: zhida ? 1 : 0, //1代表搜索歌手
+    t: 0,
+    flag: 1,
+    ie: 'utf-8',
+    sem: 1,
+    aggr: 0,
+    perpage: 20,
+    n: 20,
+    p: page,  //索取结果的分页
+    remoteplace: 'txt.mqq.all'
+  }
+}

@@ -16,7 +16,9 @@
       </ul>
       <loading v-show="!topList.length"></loading>
     </div>
+    <transition name="slide">
     <router-view></router-view>
+    </transition>
   </div>
 </template>
 

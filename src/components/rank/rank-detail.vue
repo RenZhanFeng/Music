@@ -1,5 +1,5 @@
 <template>
-  <transition>
+  <transition name="slide">
     <music-list :title="title" :bgImage="bgImage" :list="list" :rank="rank"></music-list>
   </transition>
 </template>
@@ -29,7 +29,7 @@ export default {
       if (this.list.length) {
         return this.list[0].image;
       } else {
-        return this.topList.mbFrontPicUrl;
+        return '';
       }
     }
   },
@@ -70,6 +70,11 @@ export default {
 </script>
 
 <style scoped lang="stylus">
-@import '../../common/stylus/variable';
-@import '../../common/stylus/mixin';
+.slide-enter-active, .slide-leave-active {
+  transition: all 0.3s ease;
+}
+
+.slide-enter, .slide-leave-to {
+  transform: translate3d(100%, 0, 0);
+}
 </style>
