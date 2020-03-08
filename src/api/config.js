@@ -91,8 +91,8 @@ export function searchResult(query, page, zhida) {
     ie: 'utf-8',
     sem: 1,
     aggr: 0,
-    perpage: 20,
-    n: 20,
+    perpage: 30,  //控制一页多少条数据
+    n: 30,  //控制一页多少条数据
     p: page,  //索取结果的分页
     remoteplace: 'txt.mqq.all'
   }

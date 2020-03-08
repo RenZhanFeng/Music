@@ -1,9 +1,9 @@
 <template>
-<div class="loading-container">
-  <div class="loading">
-    <img src="./loading.gif" alt="img" />
-    <p class="desc">{{title}}</p>
-  </div>
+  <div :class="change" ref="loding">
+    <div class="loading">
+      <img src="./loading.gif" alt="img" />
+      <p class="desc">{{title}}</p>
+    </div>
   </div>
 </template>
 
@@ -13,6 +13,15 @@ export default {
     title: {
       type: String,
       default: "正在载入..."
+    },
+    styleis: {
+      type: Boolean,
+      default: true
+    }
+  },
+  computed: {
+    change() {
+      return !this.styleis ? "" : "loading-container";
     }
   }
 };
@@ -36,6 +45,7 @@ img {
   width: 24px;
   height: 24px;
 }
+
 .loading-container {
   position: absolute;
   width: 100%;

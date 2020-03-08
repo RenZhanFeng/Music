@@ -1,6 +1,6 @@
 <template>
-  <div class="suggest">
-    <ul class="suggest-list">
+  <div class="suggest" ref="wrapper">
+    <ul class="suggest-list content">
       <li class="suggest-item" v-for="(item,index) in result" :key="index">
         <div class="icon">
           <i :class="getIconCls(item)"></i>
@@ -9,6 +9,7 @@
           <p class="text" v-html="getItemName(item)"></p>
         </div>
       </li>
+      <loading v-show="hasMore" title="上拉刷新" :styleis="false"></loading>
     </ul>
   </div>
 </template>
@@ -16,8 +17,9 @@
 <script>
 import { searchResult, ERR_OK } from "../../../api/config";
 import axios from "axios";
-import { filterSinger } from "../../../common/js/song";
-
+import { createSong2 } from "../../../common/js/song";
+import BScroll from "better-scroll";
+import Loading from "../../../base/loading/loading";
 
 const TYPE_SINGER = "singer"; //用来区分是歌曲还是歌手
 
@@ -25,7 +27,9 @@ export default {
   data() {
     return {
       page: 1,
-      result: []
+      result: [],
+
+      hasMore: true
     };
   },
   props: {
@@ -38,11 +42,42 @@ export default {
       default: true
     }
   },
-  created() {
-    this.search();
+  components: { Loading },
+  mounted() {
+    this.scroll = new BScroll(this.$refs.wrapper);
+    this.scroll.on("scrollEnd", () => {
+      if (this.scroll.y <= this.scroll.maxScrollY + 50) {
+        this.searchMore();
+      }
+    });
+  },
+  watch: {
+    query() {
+      this.search();
+    }
   },
   methods: {
+    searchMore() {
+      if (!this.hasMore) {
+        return;
+      }
+      this.page++;
+      axios
+        .get("/search/", {
+          params: searchResult(this.query, this.page, this.showSinger)
+        })
+        .then(res => {
+          if (res.data.code === ERR_OK) {
+            this.result = this.result.concat(this._genResult(res.data.data));
+            this._checkMore(res.data.data.song);
+            console.log(this.result);
+          }
+        });
+    },
     search() {
+      this.scroll.scrollTo(this.$refs.wrapper, 0, 0);
+      this.page = 1;
+      this.hasMore = true;
       axios
         .get("/search/", {
           params: searchResult(this.query, this.page, this.showSinger)
@@ -51,20 +86,35 @@ export default {
           if (res.data.code === ERR_OK) {
             console.log(res.data.data);
             this.result = this._genResult(res.data.data);
+            this._checkMore(res.data.data.song);
             console.log(this.result);
           } else {
             console.log("获取数据失败");
           }
         });
     },
+    _checkMore(data) {
+      if (!data.list.length) {
+        this.hasMore = false;
+      }
+    },
     _genResult(data) {
       let ret = [];
-      if (data.zhida && data.zhida.singerid) {
+      if (data.zhida.singername && data.song.curpage === 1) {
         ret.push({ ...data.zhida, ...{ type: TYPE_SINGER } });
       }
       if (data.song) {
-        ret = ret.concat(data.song.list);
+        ret = ret.concat(this._normalizeSongs(data.song.list));
       }
+      return ret;
+    },
+    _normalizeSongs(list) {
+      let ret = [];
+      list.forEach(musicData => {
+        if (musicData.albumid && musicData.albummid) {
+          ret.push(createSong2(musicData));
+        }
+      });
       return ret;
     },
     getIconCls(item) {
@@ -78,14 +128,8 @@ export default {
       if (item.type === TYPE_SINGER) {
         return item.singername;
       } else {
-          return `${item.albumname}`
-        //return `${item.albumname}-${filterSinger(item.singer)}`;
+        return `${item.name} -- ${item.singer}`;
       }
-    }
-  },
-  watch: {
-    query() {
-      this.search();
     }
   }
 };
@@ -98,7 +142,6 @@ export default {
 .suggest {
   height: 100%;
   overflow: hidden;
-  background #000
 }
 
 .suggest-list {

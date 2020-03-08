@@ -1,0 +1,197 @@
+[33mcommit a5a8b092221f46c7e80c4c2869a92708249ca4d4[m[33m ([m[1;36mHEAD -> [m[1;32mmaster[m[33m, [m[1;31morigin/master[m[33m, [m[1;31morigin/HEAD[m[33m)[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Fri Mar 6 16:11:26 2020 +0800
+
+    完成rank-Detail页面
+
+[33mcommit 362a7b6fa0f67450f9a360bc21a0c9fa71b91c51[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Thu Mar 5 16:44:21 2020 +0800
+
+    完成rank页面
+
+[33mcommit fee2989d25d3a1d4751eadd1b9172f8ddf5ed0fa[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Thu Mar 5 10:42:39 2020 +0800
+
+    重新整理歌曲数据
+
+[33mcommit bf30c3fb42275b4608f2dddffe650a2f3869f3da[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Wed Mar 4 17:29:35 2020 +0800
+
+    制作推荐歌单的详情页
+
+[33mcommit b905d54833194d4eb815066faf9b90b80833645b[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Tue Mar 3 16:33:27 2020 +0800
+
+    基本完成播放器页面功能
+
+[33mcommit 70084a2a8d1ca5bacf39c4f5ce5b61e170c2496f[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Mon Mar 2 18:10:29 2020 +0800
+
+    7-22，7：22
+
+[33mcommit 280a14ddd1db9665f47c503eac8c0ac0258e6fa3[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Wed Feb 26 16:27:53 2020 +0800
+
+    成功获取歌词数据
+
+[33mcommit 61a534c3e1ebb9bd432ca177b9a00f6007c2aecf[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Tue Feb 25 18:07:52 2020 +0800
+
+    尝试获取歌词数据
+
+[33mcommit 27404e7889685bb9ec67300be35aef8fa816171e[m
+Author: ren <947625259@qq.com>
+Date:   Mon Feb 24 21:26:55 2020 +0800
+
+    写到歌词获取
+
+[33mcommit b2d636f8fa787d950ccec0e949479b3ae5f39b48[m
+Author: ren <947625259@qq.com>
+Date:   Sun Feb 23 23:18:09 2020 +0800
+
+    播放模式
+
+[33mcommit b120bb33e7c4fe9ab80fa9bf0f0c16bba4c1a8d7[m
+Author: ren <947625259@qq.com>
+Date:   Sun Feb 23 17:10:52 2020 +0800
+
+    完成进度条功能
+
+[33mcommit 4006c64069edc8e21d9270fcc3ab5eab6408eba7[m
+Author: ren <947625259@qq.com>
+Date:   Thu Feb 20 23:24:07 2020 +0800
+
+    完成暂停，下一首，上一首功能
+
+[33mcommit b680583148f2a5be89b27fa8f3148950906b982d[m
+Author: ren <947625259@qq.com>
+Date:   Wed Feb 19 22:54:57 2020 +0800
+
+    完成播放器打开收起动画
+
+[33mcommit 70c0a1fa52d1108ada581ee842df8e0375433529[m
+Author: ren <947625259@qq.com>
+Date:   Tue Feb 18 23:31:24 2020 +0800
+
+    测试提交
+
+[33mcommit 503081496e084ed70583dd4008f503fed0e4bdbd[m
+Author: ren <947625259@qq.com>
+Date:   Mon Feb 17 23:23:48 2020 +0800
+
+    提交测试
+
+[33mcommit 0335ffbc5b6894b7198b3971591e582b472d5658[m
+Author: ren <947625259@qq.com>
+Date:   Mon Feb 17 23:20:50 2020 +0800
+
+    提交测试
+
+[33mcommit 221f6a6a3b38b3247d404d5761c982f2a3656f8f[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Sat Jan 18 09:39:17 2020 +0800
+
+    写到播放器页面
+
+[33mcommit 5524c77910a55f0219ab77fc32ff46526ffe1f6d[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Fri Jan 10 16:22:28 2020 +0800
+
+    完成歌手详情页
+
+[33mcommit f1a62f7541e8af4a4cb90c3ebcb20dd235d852ae[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Fri Jan 3 11:02:50 2020 +0800
+
+    完成vuex初始化配置
+
+[33mcommit 0d9041f2ba3a1739f15d932c25a9ce6a1ce4c410[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Thu Jan 2 16:52:31 2020 +0800
+
+    完成歌手列表页面，开始歌手详情页面编写
+
+[33mcommit 52798b77aa55950e7b57d6a90e1f28a7b78e2f80[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Sat Dec 28 14:57:47 2019 +0800
+
+    写到歌手列表—首字母选择功能—
+
+[33mcommit 6cf70eb8d122467dc487f3c0c1c3895028fb4d71[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Mon Dec 23 18:03:02 2019 +0800
+
+    删除多余的数据获取
+
+[33mcommit 7af9400508a49bc8f83c25c5b8da9dd716f6b2b0[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Mon Dec 23 17:40:47 2019 +0800
+
+    完成推荐页面
+
+[33mcommit 001fd3660ccbd6a82f29edaeadb6f7eb5549d9d4[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Fri Dec 20 15:35:55 2019 +0800
+
+    获取QQ音乐的轮播图数据代替mock数据
+
+[33mcommit de1ca97114d2222d81c315c3982d54fafc8e4023[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Wed Dec 18 15:56:00 2019 +0800
+
+    给轮播组件增加dots
+
+[33mcommit ac1bcea8f9cdd17cd2e81e7d489180dc58800c4e[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Wed Dec 18 15:43:23 2019 +0800
+
+    把轮播图拆分到一个单独的组件
+
+[33mcommit db7272371491b1c447bcffce0355537d25ba979e[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Wed Dec 18 15:20:31 2019 +0800
+
+    使用vue-Awesome-Swiper插件完成推荐页轮播图
+
+[33mcommit 04af74cbb50668cfd77119adf0e7b5a8a246e27c[m[33m ([m[1;31morigin/Component_slider[m[33m)[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Tue Dec 17 17:44:57 2019 +0800
+
+    轮播组件，半成品
+
+[33mcommit bb57684372c64a5e83befca24ad78c77881778c2[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Fri Dec 13 15:45:32 2019 +0800
+
+    封装jsonp
+
+[33mcommit f34b89ec02936b2e387c85c6e93bd0541e29464c[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Tue Dec 10 18:23:25 2019 +0800
+
+    完成四个基本页面的路由配置和tab样式
+
+[33mcommit 55aa1e53b251d5061719f74872e418c7db081481[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Tue Dec 10 17:00:44 2019 +0800
+
+    完成首页header部分
+
+[33mcommit 61c5766d364d5a3574103b12903d3d5ed84913a9[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Tue Dec 10 16:11:05 2019 +0800
+
+    安装依赖和添加样式文件
+
+[33mcommit 1f878dc47609a002f6d07a3f29b484f8c9db18dd[m
+Author: RenZhanFeng <947625259@qq.com>
+Date:   Tue Dec 10 11:58:13 2019 +0800
+
+    first commit
