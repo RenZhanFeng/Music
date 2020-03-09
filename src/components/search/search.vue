@@ -18,6 +18,9 @@
     <div class="search-result" v-show="query">
       <suggest :query="query"></suggest>
     </div>
+    <transition name="slide">
+      <router-view></router-view>
+    </transition>
   </div>
 </template>
 

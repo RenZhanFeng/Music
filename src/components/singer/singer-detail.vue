@@ -17,7 +17,8 @@ export default {
   components: { MusicList },
   data() {
     return {
-      song: []
+      song: [],
+      vkey:'' //歌曲链接的参数
     };
   },
   computed: {
@@ -58,11 +59,11 @@ export default {
         })
         .then(res => {
           if (res.data.code === ERR_OK) {
-            console.log(res.data.singerSongList.data.songList)
+            // console.log(res.data.singerSongList.data.songList);
             this.song = this._normalizeSongs(
               res.data.singerSongList.data.songList
             );
-            console.log( this.song)
+            //console.log(this.song);
           }
         });
     },
@@ -70,7 +71,7 @@ export default {
       let ret = [];
       list.forEach(musicData => {
         if (musicData.songInfo.id && musicData.songInfo.mid) {
-          ret.push(createSong(musicData.songInfo));
+          ret.push(createSong(musicData.songInfo,this.vkey));
         }
       });
       return ret;

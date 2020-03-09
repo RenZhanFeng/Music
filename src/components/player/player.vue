@@ -9,10 +9,7 @@
     >
       <div class="normal-player" v-show="fullScreen">
         <div class="background">
-          <img
-            :src="currentSong.image"
-            alt="img"
-          />
+          <img :src="currentSong.image" alt="img" />
         </div>
         <div class="top">
           <div class="back" @click="back">
@@ -30,11 +27,7 @@
           <div class="middle-l" ref="middleL">
             <div class="cd-wrapper" ref="cdWrapper">
               <div class="cd" :class="cdCls">
-                <img
-                  :src="currentSong.image"
-                  alt="img"
-                  class="image"
-                />
+                <img :src="currentSong.image" alt="img" class="image" />
               </div>
             </div>
             <div class="playing-lyric-wrapper">
@@ -93,10 +86,7 @@
     <transition name="mini">
       <div class="mini-player" v-show="!fullScreen" @click="open">
         <div class="icon" :class="cdCls">
-          <img
-            :src="currentSong.image"
-            alt="img"
-          />
+          <img :src="currentSong.image" alt="img" />
         </div>
         <div class="textmini">
           <h2 class="name" v-html="currentSong.name"></h2>
@@ -120,7 +110,7 @@
     timeupdate是歌曲播放过程派发
     ended是歌曲播放结束时派发-->
     <audio
-      :src="currentSong.url"
+      :src="SongUrl"
       ref="audio"
       @canplay="ready"
       @error="error"
@@ -137,7 +127,7 @@ import ProgressBar from "../../base/progress-bar/progress-bar";
 import ProgressCircle from "../../base/progress-circle/progress-circle";
 import { playMode } from "../../common/js/config";
 import { shuffle } from "../../common/js/util";
-import { commonParams, songLyric, ERR_OK } from "../../api/config";
+import { commonParams, songLyric, ERR_OK, getKey } from "../../api/config";
 import axios from "axios";
 import { createSong1 } from "../../common/js/song";
 import { Base64 } from "js-base64";
@@ -153,7 +143,8 @@ export default {
       SongL: null, //歌词数据
       currentLineNum: 0, //当前歌词所在的行
       currentShow: "cd", //cd和歌词之间的切换
-      playingLyric: "" //当前歌词所在的行的歌词
+      playingLyric: "" ,//当前歌词所在的行的歌词
+      SongUrl:''
     };
   },
   components: {
@@ -171,8 +162,6 @@ export default {
       "mode",
       "sequenceList"
     ]),
-  
-
     //歌手名字
     singerName() {
       let ret = [];
@@ -214,6 +203,21 @@ export default {
   },
   mounted() {},
   methods: {
+    //歌曲音频
+    getSong() {
+      axios
+        .get("/api/", {
+          params: getKey(this.currentSong.mid)
+        })
+        .then(res => {
+          if (res.data.code === ERR_OK && res.data.req_0.data.midurlinfo[0].purl) {
+            this.SongUrl = `${this.currentSong.url}${res.data.req_0.data.midurlinfo[0].purl}`
+          }else{
+            console.log('没有获取到歌曲音频自动跳到下一首')
+            this.next()
+          }
+        });
+    },
     //获取歌词数据
     _getSongLyric() {
       let SL = Object.assign({}, songLyric, {
@@ -346,8 +350,7 @@ export default {
       return num;
     },
     onProgressBarChange(percent) {
-      this.$refs.audio.currentTime =
-        this.currentSong.duration * percent;
+      this.$refs.audio.currentTime = this.currentSong.duration * percent;
       if (!this.playing) {
         this.togglePlaying();
       }
@@ -454,7 +457,7 @@ export default {
     middleTouchStart(e) {
       this.touch.initiated = true;
       // 用来判断是否是一次移动
-     // this.touch.moved = false;
+      // this.touch.moved = false;
       const touch = e.touches[0];
       this.touch.startX = touch.pageX;
       this.touch.startY = touch.pageY;
@@ -516,6 +519,7 @@ export default {
   watch: {
     //检测currentSong的变化，发生变化就调用audio的play方法播放音乐
     currentSong(oldSong, newSong) {
+      this.getSong();
       //避免切换播放模式的时候也触发
       if (oldSong.id === newSong.id) {
         return;
@@ -817,13 +821,13 @@ i {
   text-align: center;
 }
 
- .text {
+.text {
   line-height: 32px;
   color: $color-text-l;
   font-size: $font-size-medium;
 }
 
- .current {
+.current {
   color: $color-text;
 }
 

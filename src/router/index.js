@@ -42,7 +42,11 @@ const routes = [
   },
   {
     path: '/search',
-    component: Search
+    component: Search,
+    children: [{  //二级路由
+      path: ':id',
+      component: SingerDetail
+    }]
   }
 
 ];

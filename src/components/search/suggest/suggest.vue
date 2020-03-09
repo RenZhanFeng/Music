@@ -1,7 +1,12 @@
 <template>
   <div class="suggest" ref="wrapper">
     <ul class="suggest-list content">
-      <li class="suggest-item" v-for="(item,index) in result" :key="index">
+      <li
+        class="suggest-item"
+        v-for="(item,index) in result"
+        :key="index"
+        @click="selectItem(item)"
+      >
         <div class="icon">
           <i :class="getIconCls(item)"></i>
         </div>
@@ -20,6 +25,8 @@ import axios from "axios";
 import { createSong2 } from "../../../common/js/song";
 import BScroll from "better-scroll";
 import Loading from "../../../base/loading/loading";
+import Singer from "../../../common/js/singer";
+import { mapMutations } from "vuex";
 
 const TYPE_SINGER = "singer"; //用来区分是歌曲还是歌手
 
@@ -57,6 +64,22 @@ export default {
     }
   },
   methods: {
+    ...mapMutations({
+      setSinger: "SET_SINGER"
+    }),
+    selectItem(item) {
+      if (item.type === TYPE_SINGER) {
+        const singer = new Singer({
+          id: item.singermid,
+          name: item.singername
+        });
+        //console.log(singer);
+        this.$router.push({
+          path: `/search/${singer.id}`
+        });
+        this.setSinger(singer);
+      }
+    },
     searchMore() {
       if (!this.hasMore) {
         return;
@@ -100,7 +123,7 @@ export default {
     },
     _genResult(data) {
       let ret = [];
-      if (data.zhida.singername && data.song.curpage === 1) {
+      if (data.zhida.singermid && data.song.curpage === 1) {
         ret.push({ ...data.zhida, ...{ type: TYPE_SINGER } });
       }
       if (data.song) {
