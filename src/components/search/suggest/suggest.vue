@@ -16,6 +16,9 @@
       </li>
       <loading v-show="hasMore" title="上拉刷新" :styleis="false"></loading>
     </ul>
+    <div class="no-result-wrapper" v-show="!hasMore && !result.length">
+      <no-result></no-result>
+    </div>
   </div>
 </template>
 
@@ -26,7 +29,8 @@ import { createSong2 } from "../../../common/js/song";
 import BScroll from "better-scroll";
 import Loading from "../../../base/loading/loading";
 import Singer from "../../../common/js/singer";
-import { mapMutations } from "vuex";
+import { mapMutations, mapActions } from "vuex";
+import noResult from "../../../base/no-result/no-result";
 
 const TYPE_SINGER = "singer"; //用来区分是歌曲还是歌手
 
@@ -49,7 +53,7 @@ export default {
       default: true
     }
   },
-  components: { Loading },
+  components: { Loading, noResult },
   mounted() {
     this.scroll = new BScroll(this.$refs.wrapper);
     this.scroll.on("scrollEnd", () => {
@@ -57,6 +61,9 @@ export default {
         this.searchMore();
       }
     });
+    this.scroll.on('beforeScrollStart',()=>{
+      this.$emit('listScroll')
+    })
   },
   watch: {
     query() {
@@ -67,6 +74,7 @@ export default {
     ...mapMutations({
       setSinger: "SET_SINGER"
     }),
+    ...mapActions(["insertSong"]),
     selectItem(item) {
       if (item.type === TYPE_SINGER) {
         const singer = new Singer({
@@ -78,6 +86,8 @@ export default {
           path: `/search/${singer.id}`
         });
         this.setSinger(singer);
+      } else {
+        this.insertSong(item);
       }
     },
     searchMore() {
@@ -193,5 +203,12 @@ export default {
 
 .text {
   no-wrap();
+}
+
+.no-result-wrapper {
+  position: absolute;
+  width: 100%;
+  top: 50%;
+  transform: translateY(-50%);
 }
 </style>

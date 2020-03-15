@@ -265,7 +265,7 @@ export default {
     //对Mutations的映射
     ...mapMutations({
       setFullScreen: "SET_FULL_SCREEN",
-      setPlayingState: "SET_PLATING_STATE",
+      setPlayingState: "SET_PLAYING_STATE",
       setCurrentIndex: "SET_CURRENT_INDEX",
       setPlayMode: "SET_PLAY_MODE",
       setPlayist: "SET_PLAYLIST"
@@ -537,7 +537,7 @@ export default {
       this.timer = setTimeout(() => {
         this.$refs.audio.play();
         this._getSongLyric();
-      }, 500);
+      }, 1000);
     },
     //实现歌曲的暂停和播放
     playing(newPlaying) {

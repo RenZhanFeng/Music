@@ -28,7 +28,7 @@ module.exports = {
 
   // 所有 webpack-dev-server 的选项都支持。
   devServer: {
-    //host: "192.168.8.104",
+    host: "192.168.31.148",    //公司："192.168.8.104",
     port: 8081, // 端口号
     https: false,
     open: true, //配置自动启动浏览器

@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="search-result" v-show="query">
-      <suggest :query="query"></suggest>
+      <suggest :query="query" @listScroll='blurInput'></suggest>
     </div>
     <transition name="slide">
       <router-view></router-view>
@@ -64,6 +64,10 @@ export default {
           console.log("获取数据失败");
         }
       });
+    },
+    //在手机端滑动搜索列表的时候收起键盘
+    blurInput(){
+      this.$refs.searchBox.blur()
     }
   }
 };

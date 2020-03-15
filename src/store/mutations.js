@@ -6,7 +6,7 @@ const mutations = {
     [types.SET_SINGER](state, singer) {
         state.singer = singer
     },
-    [types.SET_PLATING_STATE](state, flag) {
+    [types.SET_PLAYING_STATE](state, flag) {
         state.playing = flag
     },
     [types.SET_FULL_SCREEN](state, flag) {

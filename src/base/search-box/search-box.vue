@@ -1,12 +1,14 @@
 <template>
   <div class="search-box">
     <i class="icon-search"></i>
-    <input class="box" v-model="query" :placeholder="placeholder" />
+    <input class="box" ref="query" v-model="query" :placeholder="placeholder" />
     <i class="icon-dismiss" v-show="query" @click="clear"></i>
   </div>
 </template>
 
 <script>
+import { debounce } from "../../common/js/util";
+
 export default {
   props: {
     placeholder: {
@@ -21,9 +23,13 @@ export default {
   },
   created() {
     //在created使用回调的方式传出数据而不直接在watch:{}中传出的原因
-    this.$watch("query", newQuery => {
-      this.$emit("query", newQuery);
-    });
+    //debounce防抖优化
+    this.$watch(
+      "query",
+      debounce(newQuery => {
+        this.$emit("query", newQuery);
+      }, 200)
+    );
   },
   methods: {
     clear() {
@@ -31,6 +37,9 @@ export default {
     },
     setQuery(query) {
       this.query = query;
+    },
+    blur(){
+      this.$refs.query.blur()
     }
   }
 };
