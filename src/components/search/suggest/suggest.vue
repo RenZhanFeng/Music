@@ -89,6 +89,8 @@ export default {
       } else {
         this.insertSong(item);
       }
+      //这个派发事件用来处理搜索历史
+      this.$emit('select')
     },
     searchMore() {
       if (!this.hasMore) {

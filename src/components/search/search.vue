@@ -16,7 +16,7 @@
       </div>
     </div>
     <div class="search-result" v-show="query">
-      <suggest :query="query" @listScroll='blurInput'></suggest>
+      <suggest :query="query" @listScroll='blurInput' @select='sacrSearch'></suggest>
     </div>
     <transition name="slide">
       <router-view></router-view>
@@ -68,6 +68,10 @@ export default {
     //在手机端滑动搜索列表的时候收起键盘
     blurInput(){
       this.$refs.searchBox.blur()
+    },
+    //搜索历史功能
+    sacrSearch(){
+      
     }
   }
 };
