@@ -6,13 +6,7 @@ const SEARCH_MAX_LENGTH = 15
 
 export function saveSearch(query) {
     //获取SEARCH_KEY储存空间的情况,如果还没有这个空间就创建一个并设置为空数组
-
-    if (localDate('get', SEARCH_KEY, [])) {
-        var searches = localDate('get', SEARCH_KEY, []);
-    } else {
-        localDate('set', SEARCH_KEY, []);
-        var searches = localDate('get', SEARCH_KEY, []);
-    }
+    let searches = localDate('get', SEARCH_KEY, '', []);
     //把query插入searches数组
     insertArray(searches, query, (item) => {
         return item === query
@@ -46,7 +40,7 @@ function insertArray(arr, val, compare, maxLen) {
 
 //在历史列表删除储存数据的方法
 export function deleteSearch(query) {
-    let searches = localDate('get', SEARCH_KEY, []);
+    let searches = localDate('get', SEARCH_KEY);
     deleteFromArray(searches, (item) => {
         return item === query
     })
@@ -60,7 +54,7 @@ function deleteFromArray(arr, compare) {
     }
 }
 
-//在历史列表删除所有数据
+//在历史列表删除所有历史搜索数据
 export function clearSearch() {
     localDate('set', SEARCH_KEY, []);
     let searches = localDate('get', SEARCH_KEY);
@@ -81,9 +75,11 @@ const localDate = function (method, name, data) {
         case 'get':
             if (localStorage.getItem(name)) {
                 return JSON.parse(localStorage.getItem(name));
+            } else if (data) {
+                localStorage.setItem(name, JSON.stringify(data));
+                return JSON.parse(localStorage.getItem(name));
             } else {
                 console.log('获取不到key为' + name + '的localStorage数据')
-                return null
             }
         case 'remove':
             localStorage.removeItem(name);

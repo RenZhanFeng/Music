@@ -23,12 +23,12 @@
           </h1>
           <search-list :searches="searchHistory" @select="addQuery" @delete="deleteSearchHistory"></search-list>
         </div>
-
       </div>
     </div>
     <div class="search-result" v-show="query">
       <suggest :query="query" @listScroll="blurInput" @select="saveSearch"></suggest>
     </div>
+    <confirm></confirm>
     <transition name="slide">
       <router-view></router-view>
     </transition>
@@ -42,6 +42,7 @@ import { searchHotKye, ERR_OK } from "../../api/config";
 import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
 import searchList from "../../base/search-list/search-list";
+import Confirm from "../../base/confirm/confirm";
 
 export default {
   name: "search",
@@ -54,7 +55,8 @@ export default {
   components: {
     searchBox,
     Suggest,
-    searchList
+    searchList,
+    Confirm
   },
   created() {
     this._getsearchHotKye();
