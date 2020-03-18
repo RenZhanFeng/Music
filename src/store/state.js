@@ -1,5 +1,6 @@
 // Vuex状态管理
 import { playMode } from '../common/js/config'
+import { loadSearch } from '../common/js/cache'
 
 const state = {
     //歌手数据
@@ -13,10 +14,10 @@ const state = {
     mode: playMode.sequence,//播放模式，默认按序播放
     currentIndex: -1,//当前播放歌曲的索引
 
-    disc:{},//推荐页歌单的详情页数据
-    topList:{},//排行榜详情页数据
+    disc: {},//推荐页歌单的详情页数据
+    topList: {},//排行榜详情页数据
 
-    searchHistory:[]//搜索历史
+    searchHistory: loadSearch()//搜索历史
 }
 
 export default state

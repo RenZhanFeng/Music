@@ -13,10 +13,21 @@
             </li>
           </ul>
         </div>
+
+        <div class="search-history" v-show="searchHistory.length">
+          <h1 class="title">
+            <span class="text">搜索历史</span>
+            <span class="clear" @click="clearSearchHistory">
+              <i class="icon-clear"></i>
+            </span>
+          </h1>
+          <search-list :searches="searchHistory" @select="addQuery" @delete="deleteSearchHistory"></search-list>
+        </div>
+
       </div>
     </div>
     <div class="search-result" v-show="query">
-      <suggest :query="query" @listScroll='blurInput' @select='sacrSearch'></suggest>
+      <suggest :query="query" @listScroll="blurInput" @select="saveSearch"></suggest>
     </div>
     <transition name="slide">
       <router-view></router-view>
@@ -29,6 +40,8 @@ import searchBox from "../../base/search-box/search-box";
 import Suggest from "./suggest/suggest";
 import { searchHotKye, ERR_OK } from "../../api/config";
 import axios from "axios";
+import { mapActions, mapGetters } from "vuex";
+import searchList from "../../base/search-list/search-list";
 
 export default {
   name: "search",
@@ -40,10 +53,14 @@ export default {
   },
   components: {
     searchBox,
-    Suggest
+    Suggest,
+    searchList
   },
   created() {
     this._getsearchHotKye();
+  },
+  computed: {
+    ...mapGetters(["searchHistory"])
   },
   methods: {
     //把点击到的hotKey传到搜索框内
@@ -66,13 +83,18 @@ export default {
       });
     },
     //在手机端滑动搜索列表的时候收起键盘
-    blurInput(){
-      this.$refs.searchBox.blur()
+    blurInput() {
+      this.$refs.searchBox.blur();
     },
     //搜索历史功能
-    sacrSearch(){
-      
-    }
+    saveSearch() {
+      this.saveSearchHistory(this.query);
+    },
+    ...mapActions([
+      "saveSearchHistory",
+      "deleteSearchHistory",
+      "clearSearchHistory"
+    ])
   }
 };
 </script>
@@ -122,5 +144,32 @@ export default {
   width: 100%;
   top: 178px;
   bottom: 0;
+}
+
+.search-history {
+  position: relative;
+  margin: 0 20px;
+}
+
+.search-history .title {
+  display: flex;
+  align-items: center;
+  height: 40px;
+  margin-bottom: 0;
+  font-size: $font-size-medium;
+  color: $color-text-l;
+}
+
+.search-history .text {
+  flex: 1;
+}
+
+.search-history .clear {
+  extend-click();
+}
+
+.search-history .icon-clear {
+  font-size: $font-size-medium;
+  color: $color-text-d;
 }
 </style>
