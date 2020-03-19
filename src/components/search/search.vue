@@ -3,8 +3,8 @@
     <div class="search-box-wrapper">
       <search-box ref="searchBox" @query="onQueryChange"></search-box>
     </div>
-    <div class="shortcut-wrapper" v-show="!query">
-      <div class="shortcut">
+    <div class="shortcut-wrapper" v-show="!query" ref="wrapper">
+      <div class="shortcut content">
         <div class="hot-key">
           <h1 class="title">热门搜索</h1>
           <ul>
@@ -17,7 +17,7 @@
         <div class="search-history" v-show="searchHistory.length">
           <h1 class="title">
             <span class="text">搜索历史</span>
-            <span class="clear" @click="clearSearchHistory">
+            <span class="clear" @click="showConfirm">
               <i class="icon-clear"></i>
             </span>
           </h1>
@@ -25,10 +25,10 @@
         </div>
       </div>
     </div>
-    <div class="search-result" v-show="query">
+    <div class="search-result" v-show="query" ref="searchResult">
       <suggest :query="query" @listScroll="blurInput" @select="saveSearch"></suggest>
     </div>
-    <confirm></confirm>
+    <confirm ref="confirm" @confirm="clearSearchHistory" text="是否清空所有搜索历史" confirmBtnText="清空"></confirm>
     <transition name="slide">
       <router-view></router-view>
     </transition>
@@ -43,8 +43,11 @@ import axios from "axios";
 import { mapActions, mapGetters } from "vuex";
 import searchList from "../../base/search-list/search-list";
 import Confirm from "../../base/confirm/confirm";
+import BScroll from "better-scroll";
+import { playlistMixin } from "../../common/js/mixin";
 
 export default {
+  mixins: [playlistMixin],
   name: "search",
   data() {
     return {
@@ -61,10 +64,27 @@ export default {
   created() {
     this._getsearchHotKye();
   },
+  mounted() {
+    this.scroll = new BScroll(this.$refs.wrapper);
+  },
   computed: {
     ...mapGetters(["searchHistory"])
   },
+  watch: {
+    query(newQuery) {
+      if (!newQuery) {
+        setTimeout(() => {
+          this.scroll.refresh();
+        }, 20);
+      }
+    }
+  },
   methods: {
+    handlePlaylist(playlist) {
+      const bottom = playlist.length ? "60px" : "";
+      this.$refs.wrapper.style.bottom = bottom;
+      this.$refs.searchResult.style.bottom = bottom;
+    },
     //把点击到的hotKey传到搜索框内
     addQuery(query) {
       this.$refs.searchBox.setQuery(query);
@@ -92,6 +112,9 @@ export default {
     saveSearch() {
       this.saveSearchHistory(this.query);
     },
+    showConfirm() {
+      this.$refs.confirm.show();
+    },
     ...mapActions([
       "saveSearchHistory",
       "deleteSearchHistory",
@@ -114,10 +137,6 @@ export default {
   top: 178px;
   bottom: 0;
   width: 100%;
-}
-
-.shortcut {
-  height: 100%;
   overflow: hidden;
 }
 

@@ -32,7 +32,7 @@ export default {
   },
   data() {
     return {
-      showFlag: true
+      showFlag: false
     };
   },
   methods: {
@@ -106,5 +106,37 @@ export default {
 
 .operate .left {
   border-right: 1px solid $color-background-d;
+}
+
+.confirm-fade-enter-active {
+  animation: confirm-fadein 0.3s;
+}
+
+.confirm-content {
+  animation: confirm-zoom 0.3s;
+}
+
+@keyframes confirm-fadein {
+  0% {
+    opacity: 0;
+  }
+
+  100% {
+    opacity: 1;
+  }
+}
+
+@keyframes confirm-zoom {
+  0% {
+    transform: scale(0);
+  }
+
+  50% {
+    transform: scale(1.1);
+  }
+
+  100% {
+    transform: scale(1);
+  }
 }
 </style>
